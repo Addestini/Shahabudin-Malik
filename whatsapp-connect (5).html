@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Learn Digital Skills — Connect on WhatsApp</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<!-- Meta Pixel -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', 'YOUR_PIXEL_ID'); // replace with your Meta Pixel ID
+fbq('track', 'PageView');
+</script>
+<!-- End Meta Pixel -->
+<style>
+  :root{
+    --purple:#5B21B6;
+    --magenta:#DB4C82;
+    --orange:#FF9142;
+    --gold:#FFC65C;
+    --cream:#FFF9F0;
+    --cream-2:#FBEFDD;
+    --ink:#2B1B3D;
+    --muted:#8A7E96;
+    --whatsapp:#25D366;
+    --whatsapp-dark:#1DA851;
+    --danger:#C0453A;
+    --line:rgba(43,27,61,0.10);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0;
+    padding:0;
+    width:100%;
+    overflow-x:hidden;
+  }
+
+  body{
+    position:relative;
+    overflow-x:hidden;
+    background:linear-gradient(165deg, var(--purple) 0%, var(--magenta) 55%, var(--orange) 100%);
+    font-family:'Manrope', sans-serif;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding-bottom:env(safe-area-inset-bottom, 0px);
+  }
+
+  body::before,
+  body::after{
+    content:"";
+    position:absolute;
+    border-radius:50%;
+    filter:blur(60px);
+    z-index:0;
+    pointer-events:none;
+  }
+  body::before{
+    width:280px;height:280px;
+    top:-60px; left:-40px;
+    background:rgba(255,198,92,0.45);
+  }
+  body::after{
+    width:320px;height:320px;
+    top:180px; right:-40px;
+    background:rgba(219,76,130,0.4);
+  }
+
+  .page{
+    position:relative;
+    z-index:1;
+    width:100%;
+    max-width:460px;
+    padding:52px 20px 0;
+  }
+
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:36px;
+    line-height:1.2;
+    text-align:center;
+    color:#FFFFFF;
+    margin:0 0 14px;
+    letter-spacing:-0.01em;
+    text-shadow:0 2px 20px rgba(91,33,182,0.35);
+  }
+
+  .tagline{
+    text-align:center;
+    font-size:15px;
+    font-weight:700;
+    color:var(--gold);
+    margin:0 0 30px;
+  }
+
+  .video-frame{
+    position:relative;
+    width:100%;
+    padding-top:56.25%; /* 16:9, bulletproof fallback for aspect-ratio */
+    margin-top:6px;
+    border-radius:24px;
+    overflow:hidden;
+    background:#1A0F2B;
+    border:2px solid rgba(255,255,255,0.55);
+    box-shadow:0 24px 60px -18px rgba(43,27,61,0.55);
+  }
+
+  .video-frame iframe{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    border:0;
+  }
+
+  .content-card{
+    position:relative;
+    background:var(--cream);
+    border-radius:28px;
+    margin:28px 0 0;
+    padding:36px 22px calc(48px + env(safe-area-inset-bottom, 0px));
+    box-shadow:0 20px 44px -24px rgba(43,27,61,0.45);
+  }
+
+  .bio{
+    font-size:15.5px;
+    line-height:1.65;
+    color:var(--ink);
+    text-align:center;
+    margin:0 0 26px;
+  }
+
+  .bio strong{
+    color:var(--magenta);
+  }
+
+  .cta-eyebrow{
+    text-align:center;
+    font-size:13px;
+    font-weight:700;
+    color:var(--magenta);
+    margin:0 0 6px;
+  }
+
+  .cta-heading{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:22px;
+    text-align:center;
+    color:var(--ink);
+    margin:0 0 10px;
+  }
+
+  .cta-text{
+    text-align:center;
+    font-size:14.5px;
+    line-height:1.6;
+    color:var(--ink);
+    margin:0 0 24px;
+  }
+
+  .copyright{
+    text-align:center;
+    font-size:11.5px;
+    color:rgba(255,255,255,0.75);
+    margin-top:20px;
+    padding-bottom:calc(24px + env(safe-area-inset-bottom, 0px));
+  }
+
+  form{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+  }
+
+  .field{
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+  }
+
+  label{
+    font-size:13px;
+    font-weight:700;
+    color:var(--purple);
+  }
+
+  input{
+    background:#FFFFFF;
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:13px 14px;
+    font-family:'Manrope', sans-serif;
+    font-size:16px;
+    color:var(--ink);
+    outline:none;
+    transition:border-color .15s ease, box-shadow .15s ease;
+  }
+
+  input::placeholder{color:#B3A8BD;}
+
+  input:focus{
+    border-color:var(--gold);
+    box-shadow:0 0 0 3px rgba(255,198,92,0.3);
+  }
+
+  .error{
+    font-size:12.5px;
+    color:var(--danger);
+    min-height:15px;
+    display:none;
+  }
+
+  .field.invalid .error{display:block;}
+  .field.invalid input{border-color:var(--danger);}
+
+  button{
+    margin-top:6px;
+    border:none;
+    border-radius:14px;
+    padding:16px 18px;
+    font-family:'Manrope', sans-serif;
+    font-size:16px;
+    font-weight:800;
+    color:#0B2116;
+    background:linear-gradient(180deg, #2CE07B 0%, var(--whatsapp) 100%);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    cursor:pointer;
+    box-shadow:0 14px 30px -12px rgba(37,211,102,0.6);
+    transition:transform .15s ease, box-shadow .2s ease;
+  }
+
+  button:hover{
+    box-shadow:0 18px 34px -10px rgba(37,211,102,0.8);
+  }
+
+  button:active{
+    transform:scale(0.98);
+  }
+
+  button svg{width:20px;height:20px;flex:none;}
+
+  #open-lead-modal{
+    width:fit-content;
+    margin:4px auto 0;
+    padding:16px 30px;
+    animation:gentle-shake 1.4s ease-in-out infinite;
+  }
+
+  @keyframes gentle-shake{
+    0%, 100%{transform:translateX(0);}
+    25%{transform:translateX(-3px);}
+    50%{transform:translateX(0);}
+    75%{transform:translateX(3px);}
+  }
+
+  @keyframes nudge{
+    0%,100%{transform:translateX(0);}
+    20%{transform:translateX(-3px);}
+    40%{transform:translateX(3px);}
+    60%{transform:translateX(-2px);}
+    80%{transform:translateX(2px);}
+  }
+
+  button.nudge{animation:nudge 0.5s ease;}
+
+  .footnote{
+    text-align:center;
+    font-size:12.5px;
+    color:var(--muted);
+    margin-top:18px;
+    padding-top:16px;
+    border-top:1px solid var(--line);
+    line-height:1.5;
+  }
+
+  .footnote a{
+    color:var(--purple);
+    font-weight:700;
+    text-decoration:underline;
+  }
+
+  .modal-backdrop{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(43,27,61,0.55);
+    z-index:10;
+    align-items:flex-end;
+    justify-content:center;
+  }
+
+  .modal-backdrop.open{
+    display:flex;
+  }
+
+  .modal{
+    background:var(--cream);
+    width:100%;
+    max-width:460px;
+    max-height:80vh;
+    overflow-y:auto;
+    border-radius:22px 22px 0 0;
+    padding:26px 22px 30px;
+  }
+
+  .modal h2{
+    font-family:'Fraunces', serif;
+    font-size:21px;
+    color:var(--ink);
+    margin:0 0 14px;
+  }
+
+  .modal p{
+    font-size:14px;
+    line-height:1.6;
+    color:var(--ink);
+    margin:0 0 12px;
+  }
+
+  .modal-close{
+    display:block;
+    margin:18px auto 0;
+    background:var(--purple);
+    color:#FFFFFF;
+    border:none;
+    border-radius:12px;
+    padding:12px 20px;
+    font-family:'Manrope', sans-serif;
+    font-size:14.5px;
+    font-weight:700;
+    cursor:pointer;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    button.nudge{animation:none;}
+    #open-lead-modal{animation:none;}
+    *{transition:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <h1>Learn Digital Skills</h1>
+  <p class="tagline">Learn &bull; Practice &bull; Grow &mdash; right from your mobile</p>
+
+  <div class="video-frame">
+    <iframe
+      id="yt-player"
+      src="https://www.youtube-nocookie.com/embed/YOUTUBE_VIDEO_ID?rel=0&modestbranding=1"
+      title="Introduction video"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen
+      loading="lazy">
+    </iframe>
+  </div>
+
+  <div class="content-card">
+
+    <p class="bio">Assalamu Alaikum, I'm <strong>Shahabuddin Malik</strong>. I teach digital skills that you can learn and practice using just your mobile phone. Alhamdulillah, anyone can start learning from anywhere.</p>
+
+    <p class="cta-eyebrow">Bismillah &mdash;</p>
+    <h2 class="cta-heading">Start Today</h2>
+    <p class="cta-text">Take the first step. Message me on WhatsApp &mdash; I'll personally guide you.</p>
+
+    <button type="button" id="open-lead-modal">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.148.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.004 2.003c-5.514 0-9.997 4.483-9.997 9.997 0 1.762.462 3.485 1.34 5.003L2 22l5.116-1.334a9.958 9.958 0 0 0 4.888 1.28h.004c5.514 0 9.997-4.483 9.997-9.997 0-2.67-1.04-5.18-2.928-7.067a9.935 9.935 0 0 0-7.073-2.879zm5.845 15.845a8.276 8.276 0 0 1-5.845 2.42h-.003a8.278 8.278 0 0 1-4.219-1.153l-.303-.18-3.037.792.811-2.96-.198-.304a8.264 8.264 0 0 1-1.267-4.42c0-4.583 3.73-8.312 8.315-8.312a8.26 8.26 0 0 1 5.877 2.438 8.259 8.259 0 0 1 2.435 5.876 8.276 8.276 0 0 1-2.566 5.803z"/></svg>
+      Chat on WhatsApp
+    </button>
+
+  </div>
+
+  <div class="copyright">&copy; Copyright Malik 2026. All Rights Reserved.</div>
+
+</div>
+
+<div class="modal-backdrop" id="lead-modal">
+  <div class="modal">
+    <h2>Just two quick details</h2>
+    <form id="lead-form" novalidate>
+      <div class="field" id="name-field">
+        <label for="name">Your name</label>
+        <input type="text" id="name" name="name" placeholder="Enter your name" autocomplete="name">
+        <span class="error">Please enter your name.</span>
+      </div>
+
+      <div class="field" id="age-field">
+        <label for="age">Your age</label>
+        <input type="number" id="age" name="age" placeholder="Enter your age" inputmode="numeric" min="10" max="90" autocomplete="off">
+        <span class="error">Please enter a valid age (10&ndash;90).</span>
+      </div>
+
+      <button type="submit" id="cta">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.148.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.004 2.003c-5.514 0-9.997 4.483-9.997 9.997 0 1.762.462 3.485 1.34 5.003L2 22l5.116-1.334a9.958 9.958 0 0 0 4.888 1.28h.004c5.514 0 9.997-4.483 9.997-9.997 0-2.67-1.04-5.18-2.928-7.067a9.935 9.935 0 0 0-7.073-2.879zm5.845 15.845a8.276 8.276 0 0 1-5.845 2.42h-.003a8.278 8.278 0 0 1-4.219-1.153l-.303-.18-3.037.792.811-2.96-.198-.304a8.264 8.264 0 0 1-1.267-4.42c0-4.583 3.73-8.312 8.315-8.312a8.26 8.26 0 0 1 5.877 2.438 8.259 8.259 0 0 1 2.435 5.876 8.276 8.276 0 0 1-2.566 5.803z"/></svg>
+        Continue on WhatsApp
+      </button>
+    </form>
+
+    <div class="footnote">Your details are only used to personalize our reply. <a href="#" id="privacy-link">Privacy Policy</a></div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="privacy-modal">
+  <div class="modal">
+    <h2>Privacy Policy</h2>
+    <p>We collect your name and age only when you fill this form, so we can personalize the WhatsApp conversation that follows.</p>
+    <p>This page uses the Meta Pixel to measure how our ads are performing. It does not sell or share your details with unrelated third parties.</p>
+    <p>By tapping "Continue on WhatsApp," you agree to be contacted there regarding Shahabuddin Malik's digital skills sessions.</p>
+    <p>Have questions about your data? Message us directly on WhatsApp and we'll help.</p>
+    <button class="modal-close" id="privacy-close">Close</button>
+  </div>
+</div>
+
+<script>
+  // ---- EDIT THESE THREE BEFORE GOING LIVE ----
+  const WHATSAPP_NUMBER = "919999999999"; // country code + number, no + or spaces
+  const YOUTUBE_VIDEO_ID = "KnKA5LFqoZQ"; // swap once the video is uploaded
+  const SHEET_SCRIPT_URL = ""; // paste your Google Apps Script Web App URL here
+  // ---------------------------------------------
+
+  const form = document.getElementById('lead-form');
+  const nameInput = document.getElementById('name');
+  const ageInput = document.getElementById('age');
+  const nameField = document.getElementById('name-field');
+  const ageField = document.getElementById('age-field');
+  const cta = document.getElementById('cta');
+
+  if (YOUTUBE_VIDEO_ID !== "YOUTUBE_VIDEO_ID") {
+    document.getElementById('yt-player').src =
+      `https://www.youtube-nocookie.com/embed/${YOUTUBE_VIDEO_ID}?rel=0&modestbranding=1`;
+  }
+
+  const openLeadModal = document.getElementById('open-lead-modal');
+  const leadModal = document.getElementById('lead-modal');
+
+  openLeadModal.addEventListener('click', function(){
+    if (typeof fbq === 'function'){
+      fbq('track', 'Contact'); // tracks the initial "Chat on WhatsApp" tap, separate from the Lead event
+    }
+    leadModal.classList.add('open');
+  });
+  leadModal.addEventListener('click', function(e){
+    if (e.target === leadModal) leadModal.classList.remove('open');
+  });
+
+  const privacyLink = document.getElementById('privacy-link');
+  const privacyModal = document.getElementById('privacy-modal');
+  const privacyClose = document.getElementById('privacy-close');
+
+  privacyLink.addEventListener('click', function(e){
+    e.preventDefault();
+    privacyModal.classList.add('open');
+  });
+  privacyClose.addEventListener('click', function(){
+    privacyModal.classList.remove('open');
+  });
+  privacyModal.addEventListener('click', function(e){
+    if (e.target === privacyModal) privacyModal.classList.remove('open');
+  });
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+
+    const name = nameInput.value.trim();
+    const age = ageInput.value.trim();
+
+    const nameOk = name.length > 1;
+    const ageOk = age !== "" && +age >= 10 && +age <= 90;
+
+    nameField.classList.toggle('invalid', !nameOk);
+    ageField.classList.toggle('invalid', !ageOk);
+
+    if (!nameOk || !ageOk){
+      cta.classList.add('nudge');
+      setTimeout(() => cta.classList.remove('nudge'), 500);
+      return;
+    }
+
+    if (typeof fbq === 'function'){
+      fbq('track', 'Lead');
+    }
+
+    if (SHEET_SCRIPT_URL){
+      fetch(SHEET_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, age, timestamp: new Date().toISOString() })
+      }).catch(() => {});
+    }
+
+    const message = `Assalamu Alaikum, my name is ${name} and my age is ${age}.`;
+    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+    window.location.href = url;
+  });
+</script>
+
+</body>
+</html>
