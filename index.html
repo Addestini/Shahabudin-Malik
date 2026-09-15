@@ -146,6 +146,39 @@ fbq('track', 'PageView');
     color:var(--magenta);
   }
 
+  .cta-eyebrow{
+    text-align:center;
+    font-size:13px;
+    font-weight:700;
+    color:var(--magenta);
+    margin:0 0 6px;
+  }
+
+  .cta-heading{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:22px;
+    text-align:center;
+    color:var(--ink);
+    margin:0 0 10px;
+  }
+
+  .cta-text{
+    text-align:center;
+    font-size:14.5px;
+    line-height:1.6;
+    color:var(--ink);
+    margin:0 0 24px;
+  }
+
+  .copyright{
+    text-align:center;
+    font-size:11.5px;
+    color:rgba(255,255,255,0.75);
+    margin-top:20px;
+    padding-bottom:calc(24px + env(safe-area-inset-bottom, 0px));
+  }
+
   form{
     display:flex;
     flex-direction:column;
@@ -221,6 +254,20 @@ fbq('track', 'PageView');
   }
 
   button svg{width:20px;height:20px;flex:none;}
+
+  #open-lead-modal{
+    width:fit-content;
+    margin:4px auto 0;
+    padding:16px 30px;
+    animation:gentle-shake 1.4s ease-in-out infinite;
+  }
+
+  @keyframes gentle-shake{
+    0%, 100%{transform:translateX(0);}
+    25%{transform:translateX(-3px);}
+    50%{transform:translateX(0);}
+    75%{transform:translateX(3px);}
+  }
 
   @keyframes nudge{
     0%,100%{transform:translateX(0);}
@@ -302,6 +349,7 @@ fbq('track', 'PageView');
 
   @media (prefers-reduced-motion: reduce){
     button.nudge{animation:none;}
+    #open-lead-modal{animation:none;}
     *{transition:none !important;}
   }
 </style>
@@ -328,10 +376,28 @@ fbq('track', 'PageView');
 
     <p class="bio">Assalamu Alaikum, I'm <strong>Shahabuddin Malik</strong>. I teach digital skills that you can learn and practice using just your mobile phone. Alhamdulillah, anyone can start learning from anywhere.</p>
 
+    <p class="cta-eyebrow">Bismillah &mdash;</p>
+    <h2 class="cta-heading">Start Today</h2>
+    <p class="cta-text">Take the first step. Message me on WhatsApp &mdash; I'll personally guide you.</p>
+
+    <button type="button" id="open-lead-modal">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.148.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.004 2.003c-5.514 0-9.997 4.483-9.997 9.997 0 1.762.462 3.485 1.34 5.003L2 22l5.116-1.334a9.958 9.958 0 0 0 4.888 1.28h.004c5.514 0 9.997-4.483 9.997-9.997 0-2.67-1.04-5.18-2.928-7.067a9.935 9.935 0 0 0-7.073-2.879zm5.845 15.845a8.276 8.276 0 0 1-5.845 2.42h-.003a8.278 8.278 0 0 1-4.219-1.153l-.303-.18-3.037.792.811-2.96-.198-.304a8.264 8.264 0 0 1-1.267-4.42c0-4.583 3.73-8.312 8.315-8.312a8.26 8.26 0 0 1 5.877 2.438 8.259 8.259 0 0 1 2.435 5.876 8.276 8.276 0 0 1-2.566 5.803z"/></svg>
+      Chat on WhatsApp
+    </button>
+
+  </div>
+
+  <div class="copyright">&copy; Copyright Malik 2026. All Rights Reserved.</div>
+
+</div>
+
+<div class="modal-backdrop" id="lead-modal">
+  <div class="modal">
+    <h2>Just two quick details</h2>
     <form id="lead-form" novalidate>
       <div class="field" id="name-field">
         <label for="name">Your name</label>
-        <input type="text" id="name" name="name" placeholder="Enter your full name" autocomplete="name">
+        <input type="text" id="name" name="name" placeholder="Enter your name" autocomplete="name">
         <span class="error">Please enter your name.</span>
       </div>
 
@@ -348,9 +414,7 @@ fbq('track', 'PageView');
     </form>
 
     <div class="footnote">Your details are only used to personalize our reply. <a href="#" id="privacy-link">Privacy Policy</a></div>
-
   </div>
-
 </div>
 
 <div class="modal-backdrop" id="privacy-modal">
@@ -382,6 +446,19 @@ fbq('track', 'PageView');
     document.getElementById('yt-player').src =
       `https://www.youtube-nocookie.com/embed/${YOUTUBE_VIDEO_ID}?rel=0&modestbranding=1`;
   }
+
+  const openLeadModal = document.getElementById('open-lead-modal');
+  const leadModal = document.getElementById('lead-modal');
+
+  openLeadModal.addEventListener('click', function(){
+    if (typeof fbq === 'function'){
+      fbq('track', 'Contact'); // tracks the initial "Chat on WhatsApp" tap, separate from the Lead event
+    }
+    leadModal.classList.add('open');
+  });
+  leadModal.addEventListener('click', function(e){
+    if (e.target === leadModal) leadModal.classList.remove('open');
+  });
 
   const privacyLink = document.getElementById('privacy-link');
   const privacyModal = document.getElementById('privacy-modal');
@@ -429,7 +506,7 @@ fbq('track', 'PageView');
       }).catch(() => {});
     }
 
-    const message = `Hi, my name is ${name} and my age is ${age}.`;
+    const message = `Assalamu Alaikum, my name is ${name} and my age is ${age}.`;
     const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
     window.location.href = url;
   });
