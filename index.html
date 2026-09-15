@@ -102,7 +102,7 @@ fbq('track', 'PageView');
   .video-frame{
     position:relative;
     width:100%;
-    padding-top:177.78%; /* 9:16, bulletproof fallback for aspect-ratio */
+    padding-top:56.25%; /* 16:9, bulletproof fallback for aspect-ratio */
     margin-top:6px;
     border-radius:24px;
     overflow:hidden;
@@ -237,10 +237,6 @@ fbq('track', 'PageView');
   @media (prefers-reduced-motion: reduce){
     button.nudge{animation:none;}
     *{transition:none !important;}
-  }
-
-  @media (min-width:480px){
-    .video-frame{padding-top:56.25%;} /* 16:9 on wider screens */
   }
 </style>
 </head>
