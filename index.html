@@ -18,7 +18,7 @@ n.queue=[];t=b.createElement(e);t.async=!0;
 t.src=v;s=b.getElementsByTagName(e)[0];
 s.parentNode.insertBefore(t,s)}(window, document,'script',
 'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', '1627304105657707'); // replace with your Meta Pixel ID
+fbq('init', 'YOUR_PIXEL_ID'); // replace with your Meta Pixel ID
 fbq('track', 'PageView');
 </script>
 <!-- End Meta Pixel -->
@@ -179,53 +179,6 @@ fbq('track', 'PageView');
     padding-bottom:calc(24px + env(safe-area-inset-bottom, 0px));
   }
 
-  form{
-    display:flex;
-    flex-direction:column;
-    gap:16px;
-  }
-
-  .field{
-    display:flex;
-    flex-direction:column;
-    gap:7px;
-  }
-
-  label{
-    font-size:13px;
-    font-weight:700;
-    color:var(--purple);
-  }
-
-  input{
-    background:#FFFFFF;
-    border:1px solid var(--line);
-    border-radius:12px;
-    padding:13px 14px;
-    font-family:'Manrope', sans-serif;
-    font-size:16px;
-    color:var(--ink);
-    outline:none;
-    transition:border-color .15s ease, box-shadow .15s ease;
-  }
-
-  input::placeholder{color:#B3A8BD;}
-
-  input:focus{
-    border-color:var(--gold);
-    box-shadow:0 0 0 3px rgba(255,198,92,0.3);
-  }
-
-  .error{
-    font-size:12.5px;
-    color:var(--danger);
-    min-height:15px;
-    display:none;
-  }
-
-  .field.invalid .error{display:block;}
-  .field.invalid input{border-color:var(--danger);}
-
   button{
     margin-top:6px;
     border:none;
@@ -268,16 +221,6 @@ fbq('track', 'PageView');
     50%{transform:translateX(0);}
     75%{transform:translateX(3px);}
   }
-
-  @keyframes nudge{
-    0%,100%{transform:translateX(0);}
-    20%{transform:translateX(-3px);}
-    40%{transform:translateX(3px);}
-    60%{transform:translateX(-2px);}
-    80%{transform:translateX(2px);}
-  }
-
-  button.nudge{animation:nudge 0.5s ease;}
 
   .footnote{
     text-align:center;
@@ -348,7 +291,6 @@ fbq('track', 'PageView');
   }
 
   @media (prefers-reduced-motion: reduce){
-    button.nudge{animation:none;}
     #open-lead-modal{animation:none;}
     *{transition:none !important;}
   }
@@ -385,62 +327,29 @@ fbq('track', 'PageView');
       Chat on WhatsApp
     </button>
 
+    <div class="footnote">We respect your privacy. <a href="#" id="privacy-link">Privacy Policy</a></div>
+
   </div>
 
   <div class="copyright">&copy; Copyright Malik 2026. All Rights Reserved.</div>
 
 </div>
 
-<div class="modal-backdrop" id="lead-modal">
-  <div class="modal">
-    <h2>Just two quick details</h2>
-    <form id="lead-form" novalidate>
-      <div class="field" id="name-field">
-        <label for="name">Your name</label>
-        <input type="text" id="name" name="name" placeholder="Enter your name" autocomplete="name">
-        <span class="error">Please enter your name.</span>
-      </div>
-
-      <div class="field" id="age-field">
-        <label for="age">Your age</label>
-        <input type="number" id="age" name="age" placeholder="Enter your age" inputmode="numeric" min="10" max="90" autocomplete="off">
-        <span class="error">Please enter a valid age (10&ndash;90).</span>
-      </div>
-
-      <button type="submit" id="cta">
-        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.148.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.004 2.003c-5.514 0-9.997 4.483-9.997 9.997 0 1.762.462 3.485 1.34 5.003L2 22l5.116-1.334a9.958 9.958 0 0 0 4.888 1.28h.004c5.514 0 9.997-4.483 9.997-9.997 0-2.67-1.04-5.18-2.928-7.067a9.935 9.935 0 0 0-7.073-2.879zm5.845 15.845a8.276 8.276 0 0 1-5.845 2.42h-.003a8.278 8.278 0 0 1-4.219-1.153l-.303-.18-3.037.792.811-2.96-.198-.304a8.264 8.264 0 0 1-1.267-4.42c0-4.583 3.73-8.312 8.315-8.312a8.26 8.26 0 0 1 5.877 2.438 8.259 8.259 0 0 1 2.435 5.876 8.276 8.276 0 0 1-2.566 5.803z"/></svg>
-        Continue on WhatsApp
-      </button>
-    </form>
-
-    <div class="footnote">Your details are only used to personalize our reply. <a href="#" id="privacy-link">Privacy Policy</a></div>
-  </div>
-</div>
-
 <div class="modal-backdrop" id="privacy-modal">
   <div class="modal">
     <h2>Privacy Policy</h2>
-    <p>We collect your name and age only when you fill this form, so we can personalize the WhatsApp conversation that follows.</p>
+    <p>We don't collect any personal details on this page. Tapping "Chat on WhatsApp" opens a WhatsApp conversation directly with Shahabuddin Malik.</p>
     <p>This page uses the Meta Pixel to measure how our ads are performing. It does not sell or share your details with unrelated third parties.</p>
-    <p>By tapping "Continue on WhatsApp," you agree to be contacted there regarding Shahabuddin Malik's digital skills sessions.</p>
     <p>Have questions about your data? Message us directly on WhatsApp and we'll help.</p>
     <button class="modal-close" id="privacy-close">Close</button>
   </div>
 </div>
 
 <script>
-  // ---- EDIT THESE THREE BEFORE GOING LIVE ----
+  // ---- EDIT THESE TWO BEFORE GOING LIVE ----
   const WHATSAPP_NUMBER = "918369970356"; // country code + number, no + or spaces
   const YOUTUBE_VIDEO_ID = "KnKA5LFqoZQ"; // swap once the video is uploaded
-  const SHEET_SCRIPT_URL = ""; // paste your Google Apps Script Web App URL here
   // ---------------------------------------------
-
-  const form = document.getElementById('lead-form');
-  const nameInput = document.getElementById('name');
-  const ageInput = document.getElementById('age');
-  const nameField = document.getElementById('name-field');
-  const ageField = document.getElementById('age-field');
-  const cta = document.getElementById('cta');
 
   if (YOUTUBE_VIDEO_ID !== "YOUTUBE_VIDEO_ID") {
     document.getElementById('yt-player').src =
@@ -448,16 +357,16 @@ fbq('track', 'PageView');
   }
 
   const openLeadModal = document.getElementById('open-lead-modal');
-  const leadModal = document.getElementById('lead-modal');
 
   openLeadModal.addEventListener('click', function(){
     if (typeof fbq === 'function'){
-      fbq('track', 'Contact'); // tracks the initial "Chat on WhatsApp" tap, separate from the Lead event
+      fbq('track', 'Contact');
+      fbq('track', 'Lead');
     }
-    leadModal.classList.add('open');
-  });
-  leadModal.addEventListener('click', function(e){
-    if (e.target === leadModal) leadModal.classList.remove('open');
+
+    const message = "Assalamu Alaikum, I'm interested in learning digital skills.";
+    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+    window.location.href = url;
   });
 
   const privacyLink = document.getElementById('privacy-link');
@@ -473,42 +382,6 @@ fbq('track', 'PageView');
   });
   privacyModal.addEventListener('click', function(e){
     if (e.target === privacyModal) privacyModal.classList.remove('open');
-  });
-
-  form.addEventListener('submit', function(e){
-    e.preventDefault();
-
-    const name = nameInput.value.trim();
-    const age = ageInput.value.trim();
-
-    const nameOk = name.length > 1;
-    const ageOk = age !== "" && +age >= 10 && +age <= 90;
-
-    nameField.classList.toggle('invalid', !nameOk);
-    ageField.classList.toggle('invalid', !ageOk);
-
-    if (!nameOk || !ageOk){
-      cta.classList.add('nudge');
-      setTimeout(() => cta.classList.remove('nudge'), 500);
-      return;
-    }
-
-    if (typeof fbq === 'function'){
-      fbq('track', 'Lead');
-    }
-
-    if (SHEET_SCRIPT_URL){
-      fetch(SHEET_SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, age, timestamp: new Date().toISOString() })
-      }).catch(() => {});
-    }
-
-    const message = `Assalamu Alaikum, my name is ${name} and my age is ${age}.`;
-    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-    window.location.href = url;
   });
 </script>
 
