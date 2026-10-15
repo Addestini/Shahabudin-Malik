@@ -22,6 +22,24 @@ fbq('init', 'YOUR_PIXEL_ID'); // replace with your Meta Pixel ID
 fbq('track', 'PageView');
 </script>
 <!-- End Meta Pixel -->
+
+<!-- Video speed-up: connect to YouTube's servers and start loading the player engine straight away -->
+<link rel="preconnect" href="https://www.youtube.com">
+<link rel="preconnect" href="https://www.youtube-nocookie.com">
+<link rel="preconnect" href="https://s.ytimg.com">
+<link rel="preconnect" href="https://img.youtube.com">
+<script>
+  window.onYouTubeIframeAPIReady = function(){
+    window.__ytPending = true;
+    if (window.initYouTubePlayer) window.initYouTubePlayer();
+  };
+  (function(){
+    var t = document.createElement('script');
+    t.src = 'https://www.youtube.com/iframe_api';
+    t.async = true;
+    document.head.appendChild(t);
+  })();
+</script>
 <style>
   :root{
     --purple:#5B21B6;
@@ -597,7 +615,7 @@ fbq('track', 'PageView');
   const FULLSCREEN_FILL = false;   // true = a landscape video is zoomed to fill the whole phone screen in full-screen (sides get cropped); false = whole video visible with black bars
   // --------------------------------------
 
-  // ---- Video: plays on the page (muted) like a normal site video; tap / square button opens it full-screen ----
+  // ---- Video: starts by itself WITH sound like a normal site video; tap / square button opens it full-screen ----
   const stage = document.getElementById('video-stage');
   const videoPoster = document.getElementById('video-poster');
   const videoShield = document.getElementById('video-shield');
@@ -614,21 +632,18 @@ fbq('track', 'PageView');
   let videoOpen = false;
   let progressTimer = null;
   let scrubbing = false;
+  let autoplayMuted = false; // true only if the phone refused sound autoplay and we had to fall back to muted
 
   if (VIDEO_IS_VERTICAL) stage.classList.add('vertical');
   if (FULLSCREEN_FILL && !VIDEO_IS_VERTICAL) stage.classList.add('fill');
 
-  // thumbnail shown while the video loads: HD if available, otherwise the standard 16:9 one
-  (function setPoster(){
+  // thumbnail shown while the video loads: standard one instantly, HD one as soon as it arrives
+  videoPoster.style.backgroundImage =
+    `url(https://img.youtube.com/vi/${YOUTUBE_VIDEO_ID}/mqdefault.jpg)`;
+  (function upgradePoster(){
     const hd = new Image();
     hd.onload = function(){
-      const url = hd.naturalWidth > 200 ? hd.src
-        : `https://img.youtube.com/vi/${YOUTUBE_VIDEO_ID}/mqdefault.jpg`;
-      videoPoster.style.backgroundImage = `url(${url})`;
-    };
-    hd.onerror = function(){
-      videoPoster.style.backgroundImage =
-        `url(https://img.youtube.com/vi/${YOUTUBE_VIDEO_ID}/mqdefault.jpg)`;
+      if (hd.naturalWidth > 200) videoPoster.style.backgroundImage = `url(${hd.src})`;
     };
     hd.src = `https://img.youtube.com/vi/${YOUTUBE_VIDEO_ID}/maxresdefault.jpg`;
   })();
@@ -638,17 +653,16 @@ fbq('track', 'PageView');
     if (!stage.classList.contains('started')) videoPoster.classList.add('needs-tap');
   }, 3500);
 
-  const ytScript = document.createElement('script');
-  ytScript.src = 'https://www.youtube.com/iframe_api';
-  document.head.appendChild(ytScript);
-
-  window.onYouTubeIframeAPIReady = function(){
+  // The player engine is already loading from <head>; start the player as soon as it is ready
+  let playerStarted = false;
+  window.initYouTubePlayer = function(){
+    if (playerStarted) return;
+    playerStarted = true;
     ytPlayer = new YT.Player('yt-player', {
       host: 'https://www.youtube-nocookie.com',
       videoId: YOUTUBE_VIDEO_ID,
       playerVars: {
-        autoplay: 1,
-        mute: 1,            // muted autoplay is allowed on phones
+        autoplay: 1,        // start by itself, with sound
         controls: 0,        // we draw our own controls
         rel: 0,
         modestbranding: 1,
@@ -661,10 +675,11 @@ fbq('track', 'PageView');
       events: {
         onReady: function(){
           ytReady = true;
-          ytPlayer.mute();
+          ytPlayer.unMute();
           ytPlayer.playVideo();
           syncMuteUI();
           updateProgress();
+          checkAutoplay(1);
         },
         onStateChange: function(e){
           if (e.data === YT.PlayerState.PLAYING){
@@ -676,7 +691,7 @@ fbq('track', 'PageView');
             if (videoOpen) stage.classList.add('paused');
             updateProgress();
           } else if (e.data === YT.PlayerState.ENDED){
-            // no YouTube end screen: go back to the page and loop quietly
+            // no YouTube end screen: go back to the page and play again
             if (videoOpen) closeVideo();
             ytPlayer.seekTo(0, true);
             ytPlayer.playVideo();
@@ -685,6 +700,36 @@ fbq('track', 'PageView');
       }
     });
   };
+  if (window.__ytPending) window.initYouTubePlayer();
+
+  // Some phones / browsers refuse to start a video with sound before the visitor has touched the page.
+  // If that happens, play it muted straight away (no waiting), and switch the sound on at the first tap.
+  function checkAutoplay(attempt){
+    setTimeout(function(){
+      if (!ytReady || stage.classList.contains('started')) return;
+      const st = ytPlayer.getPlayerState();
+      if (st === YT.PlayerState.PLAYING) return;
+      if (st === YT.PlayerState.BUFFERING && attempt < 3){ checkAutoplay(attempt + 1); return; }
+      autoplayMuted = true;
+      ytPlayer.mute();
+      ytPlayer.playVideo();
+      syncMuteUI();
+    }, attempt === 1 ? 900 : 1500);
+  }
+
+  const gestureEvents = ['pointerdown', 'touchend', 'click', 'keydown'];
+  function onFirstGesture(e){
+    if (!ytReady) return;
+    if (e.target && e.target.closest && e.target.closest('.vc')) return; // the player's own buttons do their own thing
+    if (autoplayMuted){
+      ytPlayer.unMute();
+      autoplayMuted = false;
+      syncMuteUI();
+    }
+    if (!stage.classList.contains('started')) ytPlayer.playVideo();
+    gestureEvents.forEach(function(n){ document.removeEventListener(n, onFirstGesture, true); });
+  }
+  gestureEvents.forEach(function(n){ document.addEventListener(n, onFirstGesture, true); });
 
   function fmt(t){
     t = Math.max(0, Math.floor(t || 0));
@@ -723,6 +768,7 @@ fbq('track', 'PageView');
     document.body.classList.add('video-open');
     history.pushState({ video: true }, '');
     if (ytReady){
+      autoplayMuted = false;
       ytPlayer.unMute();   // opened by a tap, so sound is allowed
       ytPlayer.playVideo();
       syncMuteUI();
@@ -734,11 +780,7 @@ fbq('track', 'PageView');
     videoOpen = false;
     stage.classList.remove('fs', 'paused');
     document.body.classList.remove('video-open');
-    if (ytReady){
-      ytPlayer.mute();     // back on the page it plays quietly again
-      ytPlayer.playVideo();
-      syncMuteUI();
-    }
+    syncMuteUI();
     if (fromPop !== true && history.state && history.state.video) history.back();
   }
 
