@@ -29,6 +29,17 @@ fbq('track', 'PageView');
 <link rel="preconnect" href="https://s.ytimg.com">
 <link rel="preconnect" href="https://img.youtube.com">
 <script>
+  // Asks the browser, before the video starts: "is autoplay WITH SOUND allowed on this page?"
+  window.__soundProbe = (function(){
+    try {
+      var a = new Audio('data:audio/wav;base64,UklGRmQGAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YUAGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
+      a.volume = 1;
+      var p = a.play();
+      if (p && p.then) return p.then(function(){ a.pause(); return true; }, function(){ return false; });
+      return Promise.resolve(true);
+    } catch (e) { return Promise.resolve(false); }
+  })();
+
   window.onYouTubeIframeAPIReady = function(){
     window.__ytPending = true;
     if (window.initYouTubePlayer) window.initYouTubePlayer();
@@ -314,6 +325,33 @@ fbq('track', 'PageView');
   .video-stage.fs #vc-full .i-expand{display:none;}
   .video-stage.fs #vc-full .i-compress{display:block;}
 
+  .sound-pill{
+    display:none;
+    position:absolute;
+    z-index:4;
+    top:12px;
+    left:12px;
+    margin:0;
+    padding:8px 14px 8px 10px;
+    gap:6px;
+    align-items:center;
+    border:1px solid rgba(255,255,255,0.4);
+    border-radius:999px;
+    background:rgba(0,0,0,0.6);
+    box-shadow:none;
+    color:#FFFFFF;
+    font-family:'Manrope', sans-serif;
+    font-size:13px;
+    font-weight:700;
+    cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+  }
+
+  .sound-pill:hover{box-shadow:none;}
+  .sound-pill:active{transform:none;}
+  .sound-pill svg{width:18px;height:18px;fill:currentColor;}
+  .video-stage.started.is-muted .sound-pill{display:flex;}
+
   .video-close{
     display:none;
     position:absolute;
@@ -557,6 +595,11 @@ fbq('track', 'PageView');
         <div class="video-shield" id="video-shield"></div>
         <div class="play-hint"><div class="play-btn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></div></div>
 
+        <button type="button" class="sound-pill" id="sound-pill" aria-label="Turn sound on">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 8v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z"/></svg>
+          Tap for sound
+        </button>
+
         <div class="vc">
           <button type="button" class="vc-btn" id="vc-play" aria-label="Play or pause">
             <svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
@@ -653,29 +696,48 @@ fbq('track', 'PageView');
     if (!stage.classList.contains('started')) videoPoster.classList.add('needs-tap');
   }, 3500);
 
-  // The player engine is already loading from <head>; start the player as soon as it is ready
+  // The player engine is already loading from <head>. We start the player once BOTH the engine
+  // and the sound check are ready, so the video starts in the right mode (sound or muted) from the first frame.
+  let soundAllowed = null; // answer of the sound check
   let playerStarted = false;
-  window.initYouTubePlayer = function(){
-    if (playerStarted) return;
+
+  function startPlayer(){
+    if (playerStarted || soundAllowed === null || !(window.YT && YT.Player)) return;
     playerStarted = true;
-    ytPlayer = new YT.Player('yt-player', {
-      host: 'https://www.youtube-nocookie.com',
-      videoId: YOUTUBE_VIDEO_ID,
-      playerVars: {
-        autoplay: 1,        // start by itself, with sound
-        controls: 0,        // we draw our own controls
-        rel: 0,
-        modestbranding: 1,
-        playsinline: 1,
-        disablekb: 1,
-        fs: 0,
-        iv_load_policy: 3,
-        cc_load_policy: 0
-      },
+
+    const holder = document.getElementById('yt-player');
+    const frame = document.createElement('iframe');
+    const q = new URLSearchParams({
+      enablejsapi: 1,
+      autoplay: 1,
+      mute: soundAllowed ? 0 : 1,  // sound only when the browser really allows it
+      controls: 0,                 // we draw our own controls
+      rel: 0,
+      modestbranding: 1,
+      playsinline: 1,
+      disablekb: 1,
+      fs: 0,
+      iv_load_policy: 3,
+      cc_load_policy: 0
+    });
+    if (/^https?:/.test(location.origin)) q.set('origin', location.origin);
+    frame.id = 'yt-frame';
+    frame.title = 'Video';
+    frame.allow = 'autoplay; encrypted-media; picture-in-picture';
+    frame.setAttribute('allowfullscreen', '');
+    frame.src = 'https://www.youtube-nocookie.com/embed/' + YOUTUBE_VIDEO_ID + '?' + q.toString();
+    holder.replaceWith(frame);
+
+    ytPlayer = new YT.Player(frame, {
       events: {
         onReady: function(){
           ytReady = true;
-          ytPlayer.unMute();
+          if (soundAllowed){
+            soundOn();
+          } else {
+            autoplayMuted = true;
+            ytPlayer.mute();
+          }
           ytPlayer.playVideo();
           syncMuteUI();
           updateProgress();
@@ -699,11 +761,14 @@ fbq('track', 'PageView');
         }
       }
     });
-  };
-  if (window.__ytPending) window.initYouTubePlayer();
+  }
 
-  // Some phones / browsers refuse to start a video with sound before the visitor has touched the page.
-  // If that happens, play it muted straight away (no waiting), and switch the sound on at the first tap.
+  window.initYouTubePlayer = startPlayer;
+  window.__soundProbe.then(function(ok){ soundAllowed = !!ok; startPlayer(); });
+  startPlayer();
+
+  // Safety net: if the video still has not started (browser said yes to sound but then refused),
+  // start it muted right away and switch the sound on at the first tap.
   function checkAutoplay(attempt){
     setTimeout(function(){
       if (!ytReady || stage.classList.contains('started')) return;
@@ -717,15 +782,26 @@ fbq('track', 'PageView');
     }, attempt === 1 ? 900 : 1500);
   }
 
+  // Sound on / off. Always sets the volume too, so "unmuted but silent" cannot happen.
+  function soundOn(){
+    if (!ytReady) return;
+    autoplayMuted = false;
+    ytPlayer.unMute();
+    ytPlayer.setVolume(100);
+    syncMuteUI();
+  }
+  function soundOff(){
+    if (!ytReady) return;
+    ytPlayer.mute();
+    syncMuteUI();
+  }
+
+  // Any first tap / click / key anywhere on the page switches the sound on (the browser allows it from then on).
   const gestureEvents = ['pointerdown', 'touchend', 'click', 'keydown'];
   function onFirstGesture(e){
     if (!ytReady) return;
-    if (e.target && e.target.closest && e.target.closest('.vc')) return; // the player's own buttons do their own thing
-    if (autoplayMuted){
-      ytPlayer.unMute();
-      autoplayMuted = false;
-      syncMuteUI();
-    }
+    if (e.target && e.target.closest && e.target.closest('#vc-mute, #sound-pill')) return; // these two buttons handle themselves
+    if (autoplayMuted) soundOn();
     if (!stage.classList.contains('started')) ytPlayer.playVideo();
     gestureEvents.forEach(function(n){ document.removeEventListener(n, onFirstGesture, true); });
   }
@@ -742,6 +818,7 @@ fbq('track', 'PageView');
     const dur = ytPlayer.getDuration() || 0;
     vcFill.style.width = (dur ? Math.min(100, cur / dur * 100) : 0) + '%';
     vcTime.textContent = fmt(cur) + ' / ' + fmt(dur);
+    syncMuteUI();
   }
 
   function startProgress(){
@@ -751,7 +828,8 @@ fbq('track', 'PageView');
 
   function syncMuteUI(){
     if (!ytReady) return;
-    stage.classList.toggle('is-muted', ytPlayer.isMuted());
+    const silent = ytPlayer.isMuted() || ytPlayer.getVolume() === 0;
+    stage.classList.toggle('is-muted', silent);
   }
 
   function togglePlay(){
@@ -768,10 +846,8 @@ fbq('track', 'PageView');
     document.body.classList.add('video-open');
     history.pushState({ video: true }, '');
     if (ytReady){
-      autoplayMuted = false;
-      ytPlayer.unMute();   // opened by a tap, so sound is allowed
+      soundOn();           // opened by a tap, so sound is allowed
       ytPlayer.playVideo();
-      syncMuteUI();
     }
   }
 
@@ -793,11 +869,15 @@ fbq('track', 'PageView');
     if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openVideo(); }
   });
 
+  document.getElementById('sound-pill').addEventListener('click', function(e){
+    e.stopPropagation();
+    soundOn();
+  });
+
   vcPlay.addEventListener('click', togglePlay);
   vcMute.addEventListener('click', function(){
     if (!ytReady) return;
-    if (ytPlayer.isMuted()) ytPlayer.unMute(); else ytPlayer.mute();
-    syncMuteUI();
+    if (stage.classList.contains('is-muted')) soundOn(); else soundOff();
   });
   vcFull.addEventListener('click', function(){
     if (videoOpen) closeVideo(); else openVideo();
