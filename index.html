@@ -105,10 +105,11 @@ fbq('track', 'PageView');
     margin:0 0 30px;
   }
 
+  /* ---- Video: small card on the page, opens full-screen on tap, never leaves the page ---- */
   .video-frame{
     position:relative;
     width:100%;
-    padding-top:56.25%; /* 16:9 on every screen size */
+    padding-top:56.25%; /* 16:9 card on every screen size */
     margin-top:6px;
     border-radius:24px;
     overflow:hidden;
@@ -117,8 +118,19 @@ fbq('track', 'PageView');
     box-shadow:0 24px 60px -18px rgba(43,27,61,0.55);
   }
 
-  .video-frame #yt-player,
-  .video-frame iframe{
+  .video-stage{
+    position:absolute;
+    inset:0;
+  }
+
+  .video-box{
+    position:absolute;
+    inset:0;
+    background:#000;
+  }
+
+  .video-box iframe,
+  .video-box #yt-player{
     position:absolute;
     inset:0;
     width:100%;
@@ -126,7 +138,7 @@ fbq('track', 'PageView');
     border:0;
   }
 
-  /* Invisible layer over the video: taps only play/pause, never reach YouTube's title, logo or links */
+  /* Invisible layer over the player: taps only play/pause, they can never reach YouTube's title, logo or links */
   .video-shield{
     position:absolute;
     inset:0;
@@ -147,8 +159,6 @@ fbq('track', 'PageView');
     background:#1A0F2B center/cover no-repeat;
     -webkit-tap-highlight-color:transparent;
   }
-
-  .video-frame.playing .video-poster{display:none;}
 
   .play-btn{
     width:72px;
@@ -175,10 +185,63 @@ fbq('track', 'PageView');
     display:none;
     align-items:center;
     justify-content:center;
+    background:rgba(0,0,0,0.35);
     pointer-events:none;
   }
 
-  .video-frame.paused .play-hint{display:flex;}
+  .video-close{
+    display:none;
+    position:absolute;
+    z-index:6;
+    top:calc(14px + env(safe-area-inset-top, 0px));
+    right:14px;
+    width:44px;
+    height:44px;
+    margin:0;
+    padding:0;
+    border-radius:50%;
+    border:1px solid rgba(255,255,255,0.35);
+    background:rgba(0,0,0,0.55);
+    box-shadow:none;
+    color:#FFFFFF;
+    font-size:22px;
+    line-height:1;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+  }
+
+  /* ---- Full-screen state ---- */
+  body.video-open{overflow:hidden;}
+
+  .video-stage.fs{
+    position:fixed;
+    inset:0;
+    z-index:50;
+    background:#000;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .video-stage.fs .video-box{
+    position:relative;
+    inset:auto;
+    width:min(100vw, calc(100vh * 16 / 9));
+    width:min(100vw, calc(100dvh * 16 / 9));
+    aspect-ratio:16/9;
+  }
+
+  /* Vertical (9:16) videos fill the whole phone screen */
+  .video-stage.fs.vertical .video-box{
+    width:min(100vw, calc(100vh * 9 / 16));
+    width:min(100vw, calc(100dvh * 9 / 16));
+    aspect-ratio:9/16;
+  }
+
+  .video-stage.fs .video-poster{display:none;}
+  .video-stage.fs .video-close{display:flex;}
+  .video-stage.fs.paused .play-hint{display:flex;}
 
   .content-card{
     position:relative;
@@ -358,12 +421,17 @@ fbq('track', 'PageView');
   <h1>Learn Digital Skills</h1>
   <p class="tagline">Learn &bull; Practice &bull; Grow &mdash; right from your mobile</p>
 
-  <div class="video-frame" id="video-frame">
-    <div id="yt-player"></div>
-    <div class="video-shield" id="video-shield"></div>
-    <div class="play-hint"><div class="play-btn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></div></div>
-    <div class="video-poster" id="video-poster" role="button" tabindex="0" aria-label="Play video">
-      <div class="play-btn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></div>
+  <div class="video-frame">
+    <div class="video-stage" id="video-stage">
+      <div class="video-box" id="video-box">
+        <div id="yt-player"></div>
+        <div class="video-shield" id="video-shield"></div>
+        <div class="play-hint"><div class="play-btn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></div></div>
+      </div>
+      <div class="video-poster" id="video-poster" role="button" tabindex="0" aria-label="Play video full screen">
+        <div class="play-btn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></div>
+      </div>
+      <button type="button" class="video-close" id="video-close" aria-label="Close video">&#10005;</button>
     </div>
   </div>
 
@@ -401,19 +469,36 @@ fbq('track', 'PageView');
 <script>
   // ---- EDIT THESE BEFORE GOING LIVE ----
   const WHATSAPP_NUMBER = "919999999999"; // country code + number, no + or spaces
-  const YOUTUBE_VIDEO_ID = "KnKA5LFqoZQ";
+  const YOUTUBE_VIDEO_ID = "wUdO9GIRKLA";
+  const VIDEO_IS_VERTICAL = false; // true if the video is 9:16 (Reel / Short style) so it fills the whole phone screen
   // --------------------------------------
 
-  // ---- Video: plays inside the page, taps never open YouTube ----
-  const videoFrame = document.getElementById('video-frame');
+  // ---- Video: tap opens it full-screen inside this page; nothing can take the visitor to YouTube ----
+  const stage = document.getElementById('video-stage');
   const videoPoster = document.getElementById('video-poster');
   const videoShield = document.getElementById('video-shield');
+  const videoClose = document.getElementById('video-close');
   let ytPlayer = null;
   let ytReady = false;
   let playWhenReady = false;
+  let videoOpen = false;
 
-  videoPoster.style.backgroundImage =
-    `url(https://img.youtube.com/vi/${YOUTUBE_VIDEO_ID}/hqdefault.jpg)`;
+  if (VIDEO_IS_VERTICAL) stage.classList.add('vertical');
+
+  // thumbnail: HD if the video has one, otherwise the standard 16:9 one
+  (function setPoster(){
+    const hd = new Image();
+    hd.onload = function(){
+      const url = hd.naturalWidth > 200 ? hd.src
+        : `https://img.youtube.com/vi/${YOUTUBE_VIDEO_ID}/mqdefault.jpg`;
+      videoPoster.style.backgroundImage = `url(${url})`;
+    };
+    hd.onerror = function(){
+      videoPoster.style.backgroundImage =
+        `url(https://img.youtube.com/vi/${YOUTUBE_VIDEO_ID}/mqdefault.jpg)`;
+    };
+    hd.src = `https://img.youtube.com/vi/${YOUTUBE_VIDEO_ID}/maxresdefault.jpg`;
+  })();
 
   const ytScript = document.createElement('script');
   ytScript.src = 'https://www.youtube.com/iframe_api';
@@ -424,7 +509,7 @@ fbq('track', 'PageView');
       host: 'https://www.youtube-nocookie.com',
       videoId: YOUTUBE_VIDEO_ID,
       playerVars: {
-        controls: 0,        // no YouTube control bar / logo link
+        controls: 0,        // no YouTube control bar or logo link
         rel: 0,
         modestbranding: 1,
         playsinline: 1,
@@ -440,29 +525,43 @@ fbq('track', 'PageView');
         },
         onStateChange: function(e){
           if (e.data === YT.PlayerState.PLAYING){
-            videoFrame.classList.add('playing');
-            videoFrame.classList.remove('paused');
-          } else if (e.data === YT.PlayerState.PAUSED){
-            videoFrame.classList.add('paused');
+            stage.classList.remove('paused');
+          } else if (e.data === YT.PlayerState.PAUSED && videoOpen){
+            stage.classList.add('paused');
           } else if (e.data === YT.PlayerState.ENDED){
-            // skip YouTube's end screen: reset and show the poster again
-            ytPlayer.seekTo(0, true);
-            ytPlayer.pauseVideo();
-            videoFrame.classList.remove('playing', 'paused');
+            closeVideo(); // skips YouTube's end screen and its related videos
           }
         }
       }
     });
   };
 
-  function startVideo(){
-    videoFrame.classList.add('playing');
+  function openVideo(){
+    videoOpen = true;
+    stage.classList.add('fs');
+    stage.classList.remove('paused');
+    document.body.classList.add('video-open');
+    history.pushState({ video: true }, '');
     if (ytReady) { ytPlayer.playVideo(); } else { playWhenReady = true; }
   }
 
-  videoPoster.addEventListener('click', startVideo);
+  function closeVideo(fromPop){
+    if (!videoOpen) return;
+    videoOpen = false;
+    playWhenReady = false;
+    stage.classList.remove('fs', 'paused');
+    document.body.classList.remove('video-open');
+    if (ytReady){ ytPlayer.pauseVideo(); ytPlayer.seekTo(0, true); }
+    if (fromPop !== true && history.state && history.state.video) history.back();
+  }
+
+  videoPoster.addEventListener('click', openVideo);
   videoPoster.addEventListener('keydown', function(e){
-    if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); startVideo(); }
+    if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openVideo(); }
+  });
+  videoClose.addEventListener('click', function(){ closeVideo(); });
+  window.addEventListener('popstate', function(){
+    closeVideo(true); // phone back button closes the video, not the page
   });
 
   videoShield.addEventListener('click', function(){
