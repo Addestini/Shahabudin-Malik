@@ -53,8 +53,8 @@ fbq('track', 'PageView');
 </script>
 <style>
   :root{
-    --purple:#5B21B6;
-    --magenta:#DB4C82;
+    --purple:#7A5212;
+    --magenta:#A8721A;
     --orange:#FF9142;
     --gold:#FFC65C;
     --cream:#FFF9F0;
@@ -78,7 +78,7 @@ fbq('track', 'PageView');
   body{
     position:relative;
     overflow-x:hidden;
-    background:linear-gradient(165deg, var(--purple) 0%, var(--magenta) 55%, var(--orange) 100%);
+    background:linear-gradient(165deg, #0B0B0F 0%, #17130D 55%, #2A1F0A 100%);
     font-family:'Manrope', sans-serif;
     min-height:100vh;
     display:flex;
@@ -98,12 +98,12 @@ fbq('track', 'PageView');
   body::before{
     width:280px;height:280px;
     top:-60px; left:-40px;
-    background:rgba(255,198,92,0.45);
+    background:rgba(255,198,92,0.22);
   }
   body::after{
     width:320px;height:320px;
     top:180px; right:-40px;
-    background:rgba(219,76,130,0.4);
+    background:rgba(184,134,11,0.25);
   }
 
   .page{
@@ -123,7 +123,7 @@ fbq('track', 'PageView');
     color:#FFFFFF;
     margin:0 0 14px;
     letter-spacing:-0.01em;
-    text-shadow:0 2px 20px rgba(91,33,182,0.35);
+    text-shadow:0 2px 20px rgba(255,198,92,0.25);
   }
 
   .tagline{
@@ -131,10 +131,23 @@ fbq('track', 'PageView');
     font-size:15px;
     font-weight:700;
     color:var(--gold);
-    margin:0 0 30px;
+    margin:0 0 22px;
   }
 
   /* ---- Video: plays on the page like a normal site video, opens full-screen on tap, never leaves the page ---- */
+  .watch-first{
+    text-align:center;
+    margin:0 0 14px;
+    padding:0 6px;
+    color:#FFFFFF;
+    font-size:19px;
+    font-weight:800;
+    line-height:1.4;
+    text-shadow:0 2px 14px rgba(43,27,61,0.45);
+  }
+
+  .watch-first span{color:var(--gold);}
+
   .video-frame{
     position:relative;
     width:100%;
@@ -583,97 +596,8 @@ fbq('track', 'PageView');
     cursor:pointer;
   }
 
-  /* Round WhatsApp icon, fixed at the right edge */
-  .wa-float{
-    position:fixed;
-    right:16px;
-    bottom:calc(18px + env(safe-area-inset-bottom, 0px));
-    z-index:20;
-    width:52px;
-    height:52px;
-    margin:0;
-    padding:0;
-    border-radius:50%;
-    background:linear-gradient(180deg, #2CE07B 0%, var(--whatsapp) 100%);
-    color:#FFFFFF;
-    box-shadow:0 10px 24px -8px rgba(37,211,102,0.75), 0 2px 6px rgba(0,0,0,0.18);
-    animation:gentle-shake 1.4s ease-in-out infinite;
-    -webkit-tap-highlight-color:transparent;
-  }
-
-  .wa-float svg{width:28px;height:28px;}
-  body.video-open .wa-float{display:none;}
-
-  /* "Save the number first" pop-up */
-  #wa-modal{z-index:60;}
-
-  .wa-sheet{position:relative;}
-
-  .wa-sheet h2{padding-right:34px;font-size:26px;font-weight:800;line-height:1.2;}
-  .wa-sheet p{font-size:18px;font-weight:700;line-height:1.55;margin:0 0 20px;}
-
-  .wa-x{
-    position:absolute;
-    top:14px;
-    right:14px;
-    width:34px;
-    height:34px;
-    margin:0;
-    padding:0;
-    border-radius:50%;
-    background:rgba(43,27,61,0.08);
-    box-shadow:none;
-    color:var(--ink);
-    font-size:16px;
-    line-height:1;
-  }
-
-  .wa-x:hover{box-shadow:none;background:rgba(43,27,61,0.14);}
-  .wa-x:active{transform:none;}
-
-  .wa-row{
-    display:flex;
-    margin-bottom:12px;
-  }
-
-  .wa-sec{
-    flex:1;
-    margin:0;
-    padding:15px 10px;
-    font-size:17px;
-    font-weight:800;
-    border-radius:12px;
-    background:#FFFFFF;
-    color:var(--purple);
-    border:1.5px solid rgba(91,33,182,0.35);
-    box-shadow:none;
-    gap:8px;
-  }
-
-  .wa-sec:hover{box-shadow:none;background:#F7F1FF;}
-  .wa-sec:active{transform:scale(0.98);}
-  .wa-sec svg{width:22px;height:22px;fill:currentColor;}
-
-  .wa-go{
-    width:100%;
-    margin:0;
-    padding:16px 18px;
-    font-size:18px;
-    font-weight:800;
-    border-radius:14px;
-  }
-
-  .wa-go svg{width:24px;height:24px;fill:currentColor;}
-
-  @keyframes gentle-shake{
-    0%, 100%{transform:translateX(0);}
-    25%{transform:translateX(-3px);}
-    50%{transform:translateX(0);}
-    75%{transform:translateX(3px);}
-  }
-
   @media (prefers-reduced-motion: reduce){
-    .wa-float, .sound-pill{animation:none;}
+    .sound-pill{animation:none;}
     *{transition:none !important;}
   }
 </style>
@@ -684,6 +608,8 @@ fbq('track', 'PageView');
 
   <h1>Learn Digital Skills</h1>
   <p class="tagline">Learn &bull; Practice &bull; Grow &mdash; right from your mobile</p>
+
+  <p class="watch-first"><span>Most Important:</span> Pehle ye video dekho &mdash; sirf 2 min ka video</p>
 
   <div class="video-frame">
     <div class="video-stage" id="video-stage">
@@ -748,39 +674,11 @@ fbq('track', 'PageView');
   </div>
 </div>
 
-<!-- Round WhatsApp icon, right side -->
-<button type="button" class="wa-float" id="wa-float" aria-label="WhatsApp">
-  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.148.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.004 2.003c-5.514 0-9.997 4.483-9.997 9.997 0 1.762.462 3.485 1.34 5.003L2 22l5.116-1.334a9.958 9.958 0 0 0 4.888 1.28h.004c5.514 0 9.997-4.483 9.997-9.997 0-2.67-1.04-5.18-2.928-7.067a9.935 9.935 0 0 0-7.073-2.879zm5.845 15.845a8.276 8.276 0 0 1-5.845 2.42h-.003a8.278 8.278 0 0 1-4.219-1.153l-.303-.18-3.037.792.811-2.96-.198-.304a8.264 8.264 0 0 1-1.267-4.42c0-4.583 3.73-8.312 8.315-8.312a8.26 8.26 0 0 1 5.877 2.438 8.259 8.259 0 0 1 2.435 5.876 8.276 8.276 0 0 1-2.566 5.803z"/></svg>
-</button>
-
-<!-- Step before WhatsApp: save the number first -->
-<div class="modal-backdrop" id="wa-modal">
-  <div class="modal wa-sheet" role="dialog" aria-modal="true" aria-labelledby="wa-title">
-    <button type="button" class="wa-x" id="wa-x" aria-label="Close">&#10005;</button>
-    <h2 id="wa-title">Pehle number save karein</h2>
-    <p>Seedha message na karein. Pehle yeh number apne phone mein save karein, uske baad hi WhatsApp pe message bhejein.</p>
-
-    <div class="wa-row">
-      <button type="button" class="wa-sec" id="wa-save">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 12a3 3 0 1 0-6 0 3 3 0 0 0 6 0zm-3-9a9 9 0 1 0 0 18 9 9 0 0 0 0-18zm0 2a7 7 0 0 1 5.5 11.3C16.6 15.5 14.4 15 12 15s-4.6.5-5.5 1.3A7 7 0 0 1 12 5z"/></svg>
-        Save contact
-      </button>
-    </div>
-
-    <button type="button" class="wa-go" id="wa-go">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.148.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.004 2.003c-5.514 0-9.997 4.483-9.997 9.997 0 1.762.462 3.485 1.34 5.003L2 22l5.116-1.334a9.958 9.958 0 0 0 4.888 1.28h.004c5.514 0 9.997-4.483 9.997-9.997 0-2.67-1.04-5.18-2.928-7.067a9.935 9.935 0 0 0-7.073-2.879zm5.845 15.845a8.276 8.276 0 0 1-5.845 2.42h-.003a8.278 8.278 0 0 1-4.219-1.153l-.303-.18-3.037.792.811-2.96-.198-.304a8.264 8.264 0 0 1-1.267-4.42c0-4.583 3.73-8.312 8.315-8.312a8.26 8.26 0 0 1 5.877 2.438 8.259 8.259 0 0 1 2.435 5.876 8.276 8.276 0 0 1-2.566 5.803z"/></svg>
-      Open WhatsApp
-    </button>
-  </div>
-</div>
-
 <script>
   try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; window.scrollTo(0, 0); } catch (e) {}
   // ---- SETTINGS ----
-  const WHATSAPP_NUMBER = "918591750829"; // country code + number, no + or spaces
-  const CONTACT_NAME = "Shahabuddin Malik"; // name shown when the visitor saves the number
-  const YOUTUBE_VIDEO_ID = "yDfoB2h42UQ";
-  const VIDEO_IS_VERTICAL = false; // true if the video itself is 9:16 (Reel / Short style)
+  const YOUTUBE_VIDEO_ID = "cXS-5RvmP4A";
+  const VIDEO_IS_VERTICAL = true;  // true if the video itself is 9:16 (Reel / Short style)
   const FULLSCREEN_FILL = false;   // true = a landscape video is zoomed to fill the whole phone screen in full-screen (sides get cropped); false = whole video visible with black bars
   // --------------------------------------
 
@@ -1050,60 +948,6 @@ fbq('track', 'PageView');
   });
   vcBar.addEventListener('pointercancel', function(){ scrubbing = false; });
   // ---------------------------------------------------------------
-
-  // ---- WhatsApp: round icon -> "save the number first" pop-up -> WhatsApp (empty chat, no message) ----
-  const waModal = document.getElementById('wa-modal');
-  function openWaModal(){
-    waModal.classList.add('open');
-    if (typeof fbq === 'function') fbq('track', 'Contact'); // the icon was tapped
-  }
-  function closeWaModal(){
-    waModal.classList.remove('open');
-  }
-
-  document.getElementById('wa-float').addEventListener('click', openWaModal);
-  document.getElementById('wa-x').addEventListener('click', closeWaModal);
-  waModal.addEventListener('click', function(e){ if (e.target === waModal) closeWaModal(); });
-  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeWaModal(); });
-
-  // Save contact. Android: opens the phone's "Add contact" screen directly (no file download).
-  // iPhone / other: the contact card opens straight in Contacts.
-  const isAndroid = /Android/i.test(navigator.userAgent);
-
-  function downloadVcf(){
-    const vcf = 'BEGIN:VCARD\r\nVERSION:3.0\r\nFN:' + CONTACT_NAME + '\r\nTEL;TYPE=CELL:+' + WHATSAPP_NUMBER + '\r\nEND:VCARD\r\n';
-    const url = URL.createObjectURL(new Blob([vcf], { type: 'text/vcard' }));
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = CONTACT_NAME.replace(/\s+/g, '-') + '.vcf';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
-  }
-
-  function androidAddContact(){
-    let left = false;
-    const gone = function(){ left = true; };
-    document.addEventListener('visibilitychange', gone, { once: true });
-    window.addEventListener('pagehide', gone, { once: true });
-    window.addEventListener('blur', gone, { once: true });
-    window.location.href = 'intent:#Intent;action=android.intent.action.INSERT;type=vnd.android.cursor.dir/contact;'
-      + 'S.name=' + encodeURIComponent(CONTACT_NAME) + ';'
-      + 'S.phone=' + encodeURIComponent('+' + WHATSAPP_NUMBER) + ';end';
-    // if this browser would not open the Contacts screen, fall back to the contact card
-    setTimeout(function(){ if (!left && document.visibilityState === 'visible') downloadVcf(); }, 1600);
-  }
-
-  document.getElementById('wa-save').addEventListener('click', function(){
-    if (isAndroid) androidAddContact(); else downloadVcf();
-  });
-
-  // open WhatsApp: this is the real lead; the chat opens EMPTY (no pre-filled message)
-  document.getElementById('wa-go').addEventListener('click', function(){
-    if (typeof fbq === 'function') fbq('track', 'Lead');
-    window.location.href = 'https://wa.me/' + WHATSAPP_NUMBER;
-  });
 
   const privacyLink = document.getElementById('privacy-link');
   const privacyModal = document.getElementById('privacy-modal');
