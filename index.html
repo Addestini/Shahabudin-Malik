@@ -325,33 +325,6 @@ fbq('track', 'PageView');
   .video-stage.fs #vc-full .i-expand{display:none;}
   .video-stage.fs #vc-full .i-compress{display:block;}
 
-  .sound-pill{
-    display:none;
-    position:absolute;
-    z-index:4;
-    top:12px;
-    left:12px;
-    margin:0;
-    padding:8px 14px 8px 10px;
-    gap:6px;
-    align-items:center;
-    border:1px solid rgba(255,255,255,0.4);
-    border-radius:999px;
-    background:rgba(0,0,0,0.6);
-    box-shadow:none;
-    color:#FFFFFF;
-    font-family:'Manrope', sans-serif;
-    font-size:13px;
-    font-weight:700;
-    cursor:pointer;
-    -webkit-tap-highlight-color:transparent;
-  }
-
-  .sound-pill:hover{box-shadow:none;}
-  .sound-pill:active{transform:none;}
-  .sound-pill svg{width:18px;height:18px;fill:currentColor;}
-  .video-stage.started.is-muted .sound-pill{display:flex;}
-
   .video-close{
     display:none;
     position:absolute;
@@ -602,7 +575,8 @@ fbq('track', 'PageView');
 
   .wa-sheet{position:relative;}
 
-  .wa-sheet h2{padding-right:34px;}
+  .wa-sheet h2{padding-right:34px;font-size:26px;font-weight:800;line-height:1.2;}
+  .wa-sheet p{font-size:18px;font-weight:700;line-height:1.55;margin:0 0 20px;}
 
   .wa-x{
     position:absolute;
@@ -623,33 +597,17 @@ fbq('track', 'PageView');
   .wa-x:hover{box-shadow:none;background:rgba(43,27,61,0.14);}
   .wa-x:active{transform:none;}
 
-  .wa-number{
-    text-align:center;
-    font-family:'Fraunces', serif;
-    font-weight:600;
-    font-size:26px;
-    letter-spacing:0.01em;
-    color:var(--purple);
-    background:#FFFFFF;
-    border:1px dashed rgba(91,33,182,0.35);
-    border-radius:14px;
-    padding:12px 10px;
-    margin:4px 0 14px;
-    user-select:all;
-    -webkit-user-select:all;
-  }
-
   .wa-row{
     display:flex;
-    gap:10px;
     margin-bottom:12px;
   }
 
   .wa-sec{
     flex:1;
     margin:0;
-    padding:12px 10px;
-    font-size:14px;
+    padding:15px 10px;
+    font-size:17px;
+    font-weight:800;
     border-radius:12px;
     background:#FFFFFF;
     color:var(--purple);
@@ -660,17 +618,18 @@ fbq('track', 'PageView');
 
   .wa-sec:hover{box-shadow:none;background:#F7F1FF;}
   .wa-sec:active{transform:scale(0.98);}
-  .wa-sec svg{width:18px;height:18px;fill:currentColor;}
+  .wa-sec svg{width:22px;height:22px;fill:currentColor;}
 
   .wa-go{
     width:100%;
     margin:0;
-    padding:14px 18px;
-    font-size:15.5px;
+    padding:16px 18px;
+    font-size:18px;
+    font-weight:800;
     border-radius:14px;
   }
 
-  .wa-go svg{width:20px;height:20px;fill:currentColor;}
+  .wa-go svg{width:24px;height:24px;fill:currentColor;}
 
   @keyframes gentle-shake{
     0%, 100%{transform:translateX(0);}
@@ -698,11 +657,6 @@ fbq('track', 'PageView');
         <div id="yt-player"></div>
         <div class="video-shield" id="video-shield"></div>
         <div class="play-hint"><div class="play-btn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></div></div>
-
-        <button type="button" class="sound-pill" id="sound-pill" aria-label="Turn sound on">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 8v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z"/></svg>
-          Tap for sound
-        </button>
 
         <div class="vc">
           <button type="button" class="vc-btn" id="vc-play" aria-label="Play or pause">
@@ -767,13 +721,7 @@ fbq('track', 'PageView');
     <h2 id="wa-title">Pehle number save karein</h2>
     <p>Seedha message na karein. Pehle yeh number apne phone mein save karein, uske baad hi WhatsApp pe message bhejein.</p>
 
-    <div class="wa-number" id="wa-number">+91 00000 00000</div>
-
     <div class="wa-row">
-      <button type="button" class="wa-sec" id="wa-copy">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 16H8V7h11v14z"/></svg>
-        <span id="wa-copy-label">Copy number</span>
-      </button>
       <button type="button" class="wa-sec" id="wa-save">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 12a3 3 0 1 0-6 0 3 3 0 0 0 6 0zm-3-9a9 9 0 1 0 0 18 9 9 0 0 0 0-18zm0 2a7 7 0 0 1 5.5 11.3C16.6 15.5 14.4 15 12 15s-4.6.5-5.5 1.3A7 7 0 0 1 12 5z"/></svg>
         Save contact
@@ -788,6 +736,7 @@ fbq('track', 'PageView');
 </div>
 
 <script>
+  try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; window.scrollTo(0, 0); } catch (e) {}
   // ---- SETTINGS ----
   const WHATSAPP_NUMBER = "918591750829"; // country code + number, no + or spaces
   const CONTACT_NAME = "Shahabuddin Malik"; // name shown when the visitor saves the number
@@ -902,7 +851,15 @@ fbq('track', 'PageView');
   }
 
   window.initYouTubePlayer = startPlayer;
-  window.__soundProbe.then(function(ok){ soundAllowed = !!ok; startPlayer(); });
+  window.__soundProbe.then(function(ok){ if (soundAllowed === null) soundAllowed = !!ok; startPlayer(); });
+  // if the sound check hangs, do not wait: start muted after 0.8s (muted autoplay is always allowed)
+  setTimeout(function(){ if (soundAllowed === null){ soundAllowed = false; startPlayer(); } }, 800);
+  // keep trying until the player engine is there
+  (function waitEngine(n){
+    if (playerStarted || n > 80) return;
+    if (soundAllowed !== null) startPlayer();
+    setTimeout(function(){ waitEngine(n + 1); }, 250);
+  })(0);
   startPlayer();
 
   // Safety net: if the video still has not started (browser said yes to sound but then refused),
@@ -917,7 +874,8 @@ fbq('track', 'PageView');
       ytPlayer.mute();
       ytPlayer.playVideo();
       syncMuteUI();
-    }, attempt === 1 ? 900 : 1500);
+      if (attempt < 8) checkAutoplay(attempt + 1); // keep nudging a few times, muted autoplay is allowed
+    }, attempt === 1 ? 900 : 1000);
   }
 
   // Sound on / off. Always sets the volume too, so "unmuted but silent" cannot happen.
@@ -938,7 +896,7 @@ fbq('track', 'PageView');
   const gestureEvents = ['pointerdown', 'touchend', 'click', 'keydown'];
   function onFirstGesture(e){
     if (!ytReady) return;
-    if (e.target && e.target.closest && e.target.closest('#vc-mute, #sound-pill')) return; // these two buttons handle themselves
+    if (e.target && e.target.closest && e.target.closest('#vc-mute')) return; // this button handles itself
     if (autoplayMuted) soundOn();
     if (!stage.classList.contains('started')) ytPlayer.playVideo();
     gestureEvents.forEach(function(n){ document.removeEventListener(n, onFirstGesture, true); });
@@ -1007,11 +965,6 @@ fbq('track', 'PageView');
     if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openVideo(); }
   });
 
-  document.getElementById('sound-pill').addEventListener('click', function(e){
-    e.stopPropagation();
-    soundOn();
-  });
-
   vcPlay.addEventListener('click', togglePlay);
   vcMute.addEventListener('click', function(){
     if (!ytReady) return;
@@ -1052,17 +1005,6 @@ fbq('track', 'PageView');
 
   // ---- WhatsApp: round icon -> "save the number first" pop-up -> WhatsApp (empty chat, no message) ----
   const waModal = document.getElementById('wa-modal');
-  const waNumberEl = document.getElementById('wa-number');
-  const waCopyLabel = document.getElementById('wa-copy-label');
-
-  // +91 85917 50829 style display
-  const waDisplay = (function(n){
-    return (n.length === 12 && n.indexOf('91') === 0)
-      ? '+91 ' + n.slice(2, 7) + ' ' + n.slice(7)
-      : '+' + n;
-  })(WHATSAPP_NUMBER);
-  waNumberEl.textContent = waDisplay;
-
   function openWaModal(){
     waModal.classList.add('open');
     if (typeof fbq === 'function') fbq('track', 'Contact'); // the icon was tapped
@@ -1075,32 +1017,6 @@ fbq('track', 'PageView');
   document.getElementById('wa-x').addEventListener('click', closeWaModal);
   waModal.addEventListener('click', function(e){ if (e.target === waModal) closeWaModal(); });
   document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeWaModal(); });
-
-  // copy the number
-  document.getElementById('wa-copy').addEventListener('click', function(){
-    const text = '+' + WHATSAPP_NUMBER;
-    function done(){
-      waCopyLabel.textContent = 'Copied!';
-      setTimeout(function(){ waCopyLabel.textContent = 'Copy number'; }, 1800);
-    }
-    function fallback(){
-      const t = document.createElement('textarea');
-      t.value = text;
-      t.setAttribute('readonly', '');
-      t.style.position = 'fixed';
-      t.style.opacity = '0';
-      document.body.appendChild(t);
-      t.select();
-      try { document.execCommand('copy'); } catch (e) {}
-      document.body.removeChild(t);
-      done();
-    }
-    if (navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(text).then(done, fallback);
-    } else {
-      fallback();
-    }
-  });
 
   // save as a contact card (.vcf): the phone offers "Add contact"
   document.getElementById('wa-save').addEventListener('click', function(){
