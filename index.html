@@ -325,6 +325,40 @@ fbq('track', 'PageView');
   .video-stage.fs #vc-full .i-expand{display:none;}
   .video-stage.fs #vc-full .i-compress{display:block;}
 
+  .sound-pill{
+    display:none;
+    position:absolute;
+    z-index:4;
+    top:12px;
+    left:12px;
+    margin:0;
+    padding:10px 16px 10px 12px;
+    gap:8px;
+    align-items:center;
+    border:1px solid rgba(255,255,255,0.45);
+    border-radius:999px;
+    background:rgba(0,0,0,0.68);
+    box-shadow:none;
+    color:#FFFFFF;
+    font-family:'Manrope', sans-serif;
+    font-size:15px;
+    font-weight:800;
+    cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+    animation:pill-pulse 1.8s ease-in-out infinite;
+  }
+
+  .sound-pill:hover{box-shadow:none;}
+  .sound-pill:active{transform:none;}
+  .sound-pill svg{width:20px;height:20px;fill:currentColor;}
+  .video-stage.started.is-muted .sound-pill{display:flex;}
+  .video-stage.fs .sound-pill{top:calc(64px + env(safe-area-inset-top, 0px));}
+
+  @keyframes pill-pulse{
+    0%, 100%{transform:scale(1);}
+    50%{transform:scale(1.06);}
+  }
+
   .video-close{
     display:none;
     position:absolute;
@@ -639,7 +673,7 @@ fbq('track', 'PageView');
   }
 
   @media (prefers-reduced-motion: reduce){
-    .wa-float{animation:none;}
+    .wa-float, .sound-pill{animation:none;}
     *{transition:none !important;}
   }
 </style>
@@ -657,6 +691,11 @@ fbq('track', 'PageView');
         <div id="yt-player"></div>
         <div class="video-shield" id="video-shield"></div>
         <div class="play-hint"><div class="play-btn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></div></div>
+
+        <button type="button" class="sound-pill" id="sound-pill" aria-label="Turn sound on">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 8v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z"/></svg>
+          Tap for sound
+        </button>
 
         <div class="vc">
           <button type="button" class="vc-btn" id="vc-play" aria-label="Play or pause">
@@ -896,7 +935,7 @@ fbq('track', 'PageView');
   const gestureEvents = ['pointerdown', 'touchend', 'click', 'keydown'];
   function onFirstGesture(e){
     if (!ytReady) return;
-    if (e.target && e.target.closest && e.target.closest('#vc-mute')) return; // this button handles itself
+    if (e.target && e.target.closest && e.target.closest('#vc-mute, #sound-pill')) return; // these two buttons handle themselves
     if (autoplayMuted) soundOn();
     if (!stage.classList.contains('started')) ytPlayer.playVideo();
     gestureEvents.forEach(function(n){ document.removeEventListener(n, onFirstGesture, true); });
@@ -965,6 +1004,15 @@ fbq('track', 'PageView');
     if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openVideo(); }
   });
 
+  // "Tap for sound": sound on, and the video restarts so the visitor hears it from the very beginning
+  document.getElementById('sound-pill').addEventListener('click', function(e){
+    e.stopPropagation();
+    if (!ytReady) return;
+    soundOn();
+    ytPlayer.seekTo(0, true);
+    ytPlayer.playVideo();
+  });
+
   vcPlay.addEventListener('click', togglePlay);
   vcMute.addEventListener('click', function(){
     if (!ytReady) return;
@@ -1018,8 +1066,11 @@ fbq('track', 'PageView');
   waModal.addEventListener('click', function(e){ if (e.target === waModal) closeWaModal(); });
   document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeWaModal(); });
 
-  // save as a contact card (.vcf): the phone offers "Add contact"
-  document.getElementById('wa-save').addEventListener('click', function(){
+  // Save contact. Android: opens the phone's "Add contact" screen directly (no file download).
+  // iPhone / other: the contact card opens straight in Contacts.
+  const isAndroid = /Android/i.test(navigator.userAgent);
+
+  function downloadVcf(){
     const vcf = 'BEGIN:VCARD\r\nVERSION:3.0\r\nFN:' + CONTACT_NAME + '\r\nTEL;TYPE=CELL:+' + WHATSAPP_NUMBER + '\r\nEND:VCARD\r\n';
     const url = URL.createObjectURL(new Blob([vcf], { type: 'text/vcard' }));
     const a = document.createElement('a');
@@ -1029,6 +1080,23 @@ fbq('track', 'PageView');
     a.click();
     document.body.removeChild(a);
     setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
+  }
+
+  function androidAddContact(){
+    let left = false;
+    const gone = function(){ left = true; };
+    document.addEventListener('visibilitychange', gone, { once: true });
+    window.addEventListener('pagehide', gone, { once: true });
+    window.addEventListener('blur', gone, { once: true });
+    window.location.href = 'intent:#Intent;action=android.intent.action.INSERT;type=vnd.android.cursor.dir/contact;'
+      + 'S.name=' + encodeURIComponent(CONTACT_NAME) + ';'
+      + 'S.phone=' + encodeURIComponent('+' + WHATSAPP_NUMBER) + ';end';
+    // if this browser would not open the Contacts screen, fall back to the contact card
+    setTimeout(function(){ if (!left && document.visibilityState === 'visible') downloadVcf(); }, 1600);
+  }
+
+  document.getElementById('wa-save').addEventListener('click', function(){
+    if (isAndroid) androidAddContact(); else downloadVcf();
   });
 
   // open WhatsApp: this is the real lead; the chat opens EMPTY (no pre-filled message)
