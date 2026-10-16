@@ -399,6 +399,7 @@ fbq('track', 'PageView');
 
   /* ---- Full-screen state ---- */
   body.video-open{overflow:hidden;}
+  body.video-open .video-frame{overflow:visible;border-color:transparent;box-shadow:none;}
 
   .video-stage.fs{
     position:fixed;
@@ -724,17 +725,73 @@ fbq('track', 'PageView');
   // and the sound check are ready, so the video starts in the right mode (sound or muted) from the first frame.
   let soundAllowed = null; // answer of the sound check
   let playerStarted = false;
+  let userPaused = false;   // true only when the visitor pressed pause themselves
 
-  function startPlayer(){
-    if (playerStarted || soundAllowed === null || !(window.YT && YT.Player)) return;
-    playerStarted = true;
+  // Throws the player away and builds a fresh one at the same second. Last resort when a video is stuck.
+  let rebuilds = 0;
+  function rebuildPlayer(withSound){
+    if (!ytPlayer || rebuilds >= 3) return;
+    rebuilds++;
+    let at = 0;
+    try { at = ytPlayer.getCurrentTime() || 0; } catch (e) {}
+    ytReady = false;
+    try { ytPlayer.destroy(); } catch (e) {}
+    const old = document.getElementById('yt-frame');
+    if (old && old.parentNode) old.parentNode.removeChild(old);
+    const holder = document.createElement('div');
+    holder.id = 'yt-player';
+    videoShield.parentNode.insertBefore(holder, videoShield);
+    startPlayer(at, !!withSound);
+  }
+
+  // Watchdog: if the picture stops moving (and the visitor did not pause), nudge it, then rebuild it.
+  (function(){
+    let lastT = -1, stuck = 0;
+    setInterval(function(){
+      if (!ytReady || !stage.classList.contains('started') || userPaused || document.hidden){ stuck = 0; lastT = -1; return; }
+      const st = ytPlayer.getPlayerState();
+      const t = ytPlayer.getCurrentTime() || 0;
+      const moving = Math.abs(t - lastT) > 0.15;
+      lastT = t;
+      if (st === YT.PlayerState.ENDED || (st === YT.PlayerState.PLAYING && moving)){ stuck = 0; return; }
+      stuck++;
+      const buffering = (st === YT.PlayerState.BUFFERING);
+      if (!buffering && stuck === 2) ytPlayer.playVideo();
+      else if (!buffering && stuck === 3){ ytPlayer.seekTo(t, true); ytPlayer.playVideo(); }
+      else if (stuck >= (buffering ? 12 : 5)){ stuck = 0; rebuildPlayer(!ytPlayer.isMuted()); }
+    }, 1000);
+  })();
+
+  // coming back to the page / app: carry on playing
+  document.addEventListener('visibilitychange', function(){
+    if (!document.hidden && ytReady && !userPaused) ytPlayer.playVideo();
+  });
+
+  // after a layout change (full-screen on / off) make sure the video is still running
+  function ensurePlaying(){
+    [400, 1400].forEach(function(ms){
+      setTimeout(function(){
+        if (!ytReady || userPaused) return;
+        const st = ytPlayer.getPlayerState();
+        if (st !== YT.PlayerState.PLAYING && st !== YT.PlayerState.BUFFERING && st !== YT.PlayerState.ENDED) ytPlayer.playVideo();
+      }, ms);
+    });
+  }
+
+  function startPlayer(startAt, withSound){
+    if (typeof startAt !== 'number'){      // first start of the page
+      if (playerStarted || soundAllowed === null || !(window.YT && YT.Player)) return;
+      playerStarted = true;
+      startAt = 0;
+      withSound = soundAllowed;
+    } else if (!(window.YT && YT.Player)) return;   // rebuild at a given second
 
     const holder = document.getElementById('yt-player');
     const frame = document.createElement('iframe');
     const q = new URLSearchParams({
       enablejsapi: 1,
       autoplay: 1,
-      mute: soundAllowed ? 0 : 1,  // sound only when the browser really allows it
+      mute: withSound ? 0 : 1,     // sound only when the browser really allows it
       controls: 0,                 // we draw our own controls
       rel: 0,
       modestbranding: 1,
@@ -744,6 +801,7 @@ fbq('track', 'PageView');
       iv_load_policy: 3,
       cc_load_policy: 0
     });
+    if (startAt > 1) q.set('start', Math.floor(startAt));
     if (/^https?:/.test(location.origin)) q.set('origin', location.origin);
     frame.id = 'yt-frame';
     frame.title = 'Video';
@@ -756,7 +814,7 @@ fbq('track', 'PageView');
       events: {
         onReady: function(){
           ytReady = true;
-          if (soundAllowed){
+          if (withSound){
             soundOn();
           } else {
             autoplayMuted = true;
@@ -769,6 +827,7 @@ fbq('track', 'PageView');
         },
         onStateChange: function(e){
           if (e.data === YT.PlayerState.PLAYING){
+            userPaused = false;
             stage.classList.add('started', 'is-playing');
             stage.classList.remove('paused');
             startProgress();
@@ -803,7 +862,7 @@ fbq('track', 'PageView');
   // start it muted right away and switch the sound on at the first tap.
   function checkAutoplay(attempt){
     setTimeout(function(){
-      if (!ytReady || stage.classList.contains('started')) return;
+      if (!ytReady || userPaused) return;
       const st = ytPlayer.getPlayerState();
       if (st === YT.PlayerState.PLAYING) return;
       if (st === YT.PlayerState.BUFFERING && attempt < 3){ checkAutoplay(attempt + 1); return; }
@@ -867,8 +926,8 @@ fbq('track', 'PageView');
 
   function togglePlay(){
     if (!ytReady) return;
-    if (ytPlayer.getPlayerState() === YT.PlayerState.PLAYING) ytPlayer.pauseVideo();
-    else ytPlayer.playVideo();
+    if (ytPlayer.getPlayerState() === YT.PlayerState.PLAYING){ userPaused = true; ytPlayer.pauseVideo(); }
+    else { userPaused = false; ytPlayer.playVideo(); }
   }
 
   function openVideo(){
@@ -878,10 +937,12 @@ fbq('track', 'PageView');
     stage.classList.remove('paused');
     document.body.classList.add('video-open');
     history.pushState({ video: true }, '');
+    userPaused = false;
     if (ytReady){
       soundOn();           // opened by a tap, so sound is allowed
       ytPlayer.playVideo();
     }
+    ensurePlaying();
   }
 
   function closeVideo(fromPop){
@@ -890,6 +951,7 @@ fbq('track', 'PageView');
     stage.classList.remove('fs', 'paused');
     document.body.classList.remove('video-open');
     syncMuteUI();
+    ensurePlaying();
     if (fromPop !== true && history.state && history.state.video) history.back();
   }
 
@@ -902,13 +964,28 @@ fbq('track', 'PageView');
     if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openVideo(); }
   });
 
-  // "Tap for sound": sound on, and the video restarts so the visitor hears it from the very beginning
+  // "Tap for sound": sound on and keep playing. If the phone / in-app browser freezes or stays silent, recover.
+  function verifySound(step){
+    setTimeout(function(){
+      if (!ytReady) return;
+      const st = ytPlayer.getPlayerState();
+      const ok = (st === YT.PlayerState.PLAYING || st === YT.PlayerState.BUFFERING) && !ytPlayer.isMuted();
+      if (ok) return;
+      if (step === 1){
+        ytPlayer.unMute(); ytPlayer.setVolume(100); ytPlayer.playVideo();
+        verifySound(2);
+      } else {
+        rebuildPlayer(true);   // fresh player, started from this tap
+      }
+    }, step === 1 ? 700 : 1200);
+  }
   document.getElementById('sound-pill').addEventListener('click', function(e){
     e.stopPropagation();
     if (!ytReady) return;
+    userPaused = false;
     soundOn();
-    ytPlayer.seekTo(0, true);
     ytPlayer.playVideo();
+    verifySound(1);
   });
 
   vcPlay.addEventListener('click', togglePlay);
