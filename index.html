@@ -18,33 +18,14 @@ n.queue=[];t=b.createElement(e);t.async=!0;
 t.src=v;s=b.getElementsByTagName(e)[0];
 s.parentNode.insertBefore(t,s)}(window, document,'script',
 'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', '1627304105657707'); // replace with your Meta Pixel ID
+fbq('init', 'YOUR_PIXEL_ID'); // replace with your Meta Pixel ID
 fbq('track', 'PageView');
 </script>
 <!-- End Meta Pixel -->
-
-<!-- Video speed-up: connect to YouTube's servers and start loading the player engine straight away -->
-<link rel="preconnect" href="https://www.youtube.com">
-<link rel="preconnect" href="https://www.youtube-nocookie.com">
-<link rel="preconnect" href="https://s.ytimg.com">
-<link rel="preconnect" href="https://img.youtube.com">
-<script>
-  // Asks the browser, before the video starts: "is autoplay WITH SOUND allowed on this page?"
-  window.__soundProbe = (function(){
-    try {
-      var a = new Audio('data:audio/wav;base64,UklGRmQGAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YUAGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
-      a.volume = 1;
-      var p = a.play();
-      if (p && p.then) return p.then(function(){ a.pause(); return true; }, function(){ return false; });
-      return Promise.resolve(true);
-    } catch (e) { return Promise.resolve(false); }
-  })();
-
-</script>
 <style>
   :root{
-    --purple:#7A5212;
-    --magenta:#A8721A;
+    --purple:#5B21B6;
+    --magenta:#DB4C82;
     --orange:#FF9142;
     --gold:#FFC65C;
     --cream:#FFF9F0;
@@ -68,7 +49,7 @@ fbq('track', 'PageView');
   body{
     position:relative;
     overflow-x:hidden;
-    background:linear-gradient(165deg, #0B0B0F 0%, #17130D 55%, #2A1F0A 100%);
+    background:linear-gradient(165deg, var(--purple) 0%, var(--magenta) 55%, var(--orange) 100%);
     font-family:'Manrope', sans-serif;
     min-height:100vh;
     display:flex;
@@ -88,12 +69,12 @@ fbq('track', 'PageView');
   body::before{
     width:280px;height:280px;
     top:-60px; left:-40px;
-    background:rgba(255,198,92,0.22);
+    background:rgba(255,198,92,0.45);
   }
   body::after{
     width:320px;height:320px;
     top:180px; right:-40px;
-    background:rgba(184,134,11,0.25);
+    background:rgba(219,76,130,0.4);
   }
 
   .page{
@@ -113,7 +94,7 @@ fbq('track', 'PageView');
     color:#FFFFFF;
     margin:0 0 14px;
     letter-spacing:-0.01em;
-    text-shadow:0 2px 20px rgba(255,198,92,0.25);
+    text-shadow:0 2px 20px rgba(91,33,182,0.35);
   }
 
   .tagline{
@@ -121,27 +102,13 @@ fbq('track', 'PageView');
     font-size:15px;
     font-weight:700;
     color:var(--gold);
-    margin:0 0 22px;
+    margin:0 0 30px;
   }
-
-  /* ---- Video: normal YouTube player on the page ---- */
-  .watch-first{
-    text-align:center;
-    margin:0 0 14px;
-    padding:0 6px;
-    color:#FFFFFF;
-    font-size:19px;
-    font-weight:800;
-    line-height:1.4;
-    text-shadow:0 2px 14px rgba(43,27,61,0.45);
-  }
-
-  .watch-first span{color:var(--gold);}
 
   .video-frame{
     position:relative;
     width:100%;
-    padding-top:56.25%; /* 16:9 card on every screen size */
+    padding-top:56.25%; /* 16:9, bulletproof fallback for aspect-ratio */
     margin-top:6px;
     border-radius:24px;
     overflow:hidden;
@@ -201,7 +168,7 @@ fbq('track', 'PageView');
     font-size:14.5px;
     line-height:1.6;
     color:var(--ink);
-    margin:0;
+    margin:0 0 24px;
   }
 
   .copyright{
@@ -240,6 +207,20 @@ fbq('track', 'PageView');
   }
 
   button svg{width:20px;height:20px;flex:none;}
+
+  #open-lead-modal{
+    width:fit-content;
+    margin:4px auto 0;
+    padding:16px 30px;
+    animation:gentle-shake 1.4s ease-in-out infinite;
+  }
+
+  @keyframes gentle-shake{
+    0%, 100%{transform:translateX(0);}
+    25%{transform:translateX(-3px);}
+    50%{transform:translateX(0);}
+    75%{transform:translateX(3px);}
+  }
 
   .footnote{
     text-align:center;
@@ -310,7 +291,7 @@ fbq('track', 'PageView');
   }
 
   @media (prefers-reduced-motion: reduce){
-    
+    #open-lead-modal{animation:none;}
     *{transition:none !important;}
   }
 </style>
@@ -322,10 +303,15 @@ fbq('track', 'PageView');
   <h1>Learn Digital Skills</h1>
   <p class="tagline">Learn &bull; Practice &bull; Grow &mdash; right from your mobile</p>
 
-  <p class="watch-first"><span>Most Important:</span> Pehle ye video dekho &mdash; sirf 2 min ka video</p>
-
   <div class="video-frame">
-    <iframe id="yt-frame" title="Video" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+    <iframe
+      id="yt-player"
+      src="https://www.youtube-nocookie.com/embed/YOUTUBE_VIDEO_ID?rel=0&modestbranding=1"
+      title="Introduction video"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen
+      loading="lazy">
+    </iframe>
   </div>
 
   <div class="content-card">
@@ -335,6 +321,11 @@ fbq('track', 'PageView');
     <p class="cta-eyebrow">Bismillah &mdash;</p>
     <h2 class="cta-heading">Start Today</h2>
     <p class="cta-text">Take the first step. Message me on WhatsApp &mdash; I'll personally guide you.</p>
+
+    <button type="button" id="open-lead-modal">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.148.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.004 2.003c-5.514 0-9.997 4.483-9.997 9.997 0 1.762.462 3.485 1.34 5.003L2 22l5.116-1.334a9.958 9.958 0 0 0 4.888 1.28h.004c5.514 0 9.997-4.483 9.997-9.997 0-2.67-1.04-5.18-2.928-7.067a9.935 9.935 0 0 0-7.073-2.879zm5.845 15.845a8.276 8.276 0 0 1-5.845 2.42h-.003a8.278 8.278 0 0 1-4.219-1.153l-.303-.18-3.037.792.811-2.96-.198-.304a8.264 8.264 0 0 1-1.267-4.42c0-4.583 3.73-8.312 8.315-8.312a8.26 8.26 0 0 1 5.877 2.438 8.259 8.259 0 0 1 2.435 5.876 8.276 8.276 0 0 1-2.566 5.803z"/></svg>
+      Chat on WhatsApp
+    </button>
 
     <div class="footnote">We respect your privacy. <a href="#" id="privacy-link">Privacy Policy</a></div>
 
@@ -347,7 +338,7 @@ fbq('track', 'PageView');
 <div class="modal-backdrop" id="privacy-modal">
   <div class="modal">
     <h2>Privacy Policy</h2>
-    <p>We don't collect any personal details on this page.</p>
+    <p>We don't collect any personal details on this page. Tapping "Chat on WhatsApp" opens a WhatsApp conversation directly with Shahabuddin Malik.</p>
     <p>This page uses the Meta Pixel to measure how our ads are performing. It does not sell or share your details with unrelated third parties.</p>
     <p>Have questions about your data? Message us directly on WhatsApp and we'll help.</p>
     <button class="modal-close" id="privacy-close">Close</button>
@@ -355,35 +346,28 @@ fbq('track', 'PageView');
 </div>
 
 <script>
-  try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; window.scrollTo(0, 0); } catch (e) {}
-  // ---- SETTINGS ----
-  const YOUTUBE_VIDEO_ID = "cXS-5RvmP4A";
-  const VIDEO_IS_VERTICAL = false; // true if the video itself is 9:16 (Reel / Short style)
-  const FULLSCREEN_FILL = false;   // true = a landscape video is zoomed to fill the whole phone screen in full-screen (sides get cropped); false = whole video visible with black bars
-  // --------------------------------------
+  // ---- EDIT THESE TWO BEFORE GOING LIVE ----
+  const WHATSAPP_NUMBER = "919999999999"; // country code + number, no + or spaces
+  const YOUTUBE_VIDEO_ID = "KnKA5LFqoZQ"; // swap once the video is uploaded
+  // ---------------------------------------------
 
-  // ---- Video: normal YouTube player, starts by itself (with sound when the browser allows it, otherwise muted) ----
-  (function(){
-    const frame = document.getElementById('yt-frame');
-    let done = false;
-    function load(withSound){
-      if (done) return;
-      done = true;
-      const q = new URLSearchParams({
-        autoplay: 1,
-        mute: withSound ? 0 : 1,
-        playsinline: 1,
-        rel: 0,
-        modestbranding: 1,
-        loop: 1,
-        playlist: YOUTUBE_VIDEO_ID
-      });
-      frame.src = 'https://www.youtube-nocookie.com/embed/' + YOUTUBE_VIDEO_ID + '?' + q.toString();
+  if (YOUTUBE_VIDEO_ID !== "YOUTUBE_VIDEO_ID") {
+    document.getElementById('yt-player').src =
+      `https://www.youtube-nocookie.com/embed/${YOUTUBE_VIDEO_ID}?rel=0&modestbranding=1`;
+  }
+
+  const openLeadModal = document.getElementById('open-lead-modal');
+
+  openLeadModal.addEventListener('click', function(){
+    if (typeof fbq === 'function'){
+      fbq('track', 'Contact');
+      fbq('track', 'Lead');
     }
-    window.__soundProbe.then(function(ok){ load(!!ok); });
-    setTimeout(function(){ load(false); }, 800);   // never wait long: muted autoplay is always allowed
-  })();
-  // ---------------------------------------------------------------
+
+    const message = "Assalamu Alaikum, I'm interested in learning digital skills.";
+    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+    window.location.href = url;
+  });
 
   const privacyLink = document.getElementById('privacy-link');
   const privacyModal = document.getElementById('privacy-modal');
