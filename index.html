@@ -137,15 +137,6 @@ fbq('track', 'PageView');
     box-shadow:0 24px 60px -18px rgba(43,27,61,0.55);
   }
 
-  .video-poster{
-    position:absolute;
-    inset:0;
-    z-index:2;
-    background:#1A0F2B center/cover no-repeat;
-    cursor:pointer;
-    -webkit-tap-highlight-color:transparent;
-  }
-
   .video-frame iframe{
     position:absolute;
     inset:0;
@@ -321,7 +312,6 @@ fbq('track', 'PageView');
 
   <div class="video-frame">
     <iframe id="yt-frame" title="Video" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
-    <div class="video-poster" id="video-poster" role="button" tabindex="0" aria-label="Play video"></div>
   </div>
 
   <div class="content-card">
@@ -354,31 +344,15 @@ fbq('track', 'PageView');
   try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; window.scrollTo(0, 0); } catch (e) {}
   // ---- SETTINGS ----
   const YOUTUBE_VIDEO_ID = "FIkV6zREiy8";
+  const AUTOPLAY_MUTED = false;   // false = YouTube player shows as it is, visitor taps play (sound works). true = starts by itself, but muted
   const VIDEO_IS_VERTICAL = false; // true if the video itself is 9:16 (Reel / Short style)
   const FULLSCREEN_FILL = false;   // true = a landscape video is zoomed to fill the whole phone screen in full-screen (sides get cropped); false = whole video visible with black bars
   // --------------------------------------
 
-  // ---- Video: YouTube thumbnail first; a tap loads the normal YouTube player and plays it with sound ----
-  (function(){
-    const frame = document.getElementById('yt-frame');
-    const poster = document.getElementById('video-poster');
-
-    // thumbnail: standard one instantly, HD one as soon as it arrives
-    poster.style.backgroundImage = `url(https://img.youtube.com/vi/${YOUTUBE_VIDEO_ID}/hqdefault.jpg)`;
-    const hd = new Image();
-    hd.onload = function(){ if (hd.naturalWidth > 200) poster.style.backgroundImage = `url(${hd.src})`; };
-    hd.src = `https://img.youtube.com/vi/${YOUTUBE_VIDEO_ID}/maxresdefault.jpg`;
-
-    function play(){
-      // started by the visitor's tap, so the browser allows sound
-      frame.src = 'https://www.youtube-nocookie.com/embed/' + YOUTUBE_VIDEO_ID + '?autoplay=1&playsinline=1&rel=0&modestbranding=1';
-      poster.style.display = 'none';
-    }
-    poster.addEventListener('click', play);
-    poster.addEventListener('keydown', function(e){
-      if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); play(); }
-    });
-  })();
+  // ---- Video: the normal YouTube player, shown straight away ----
+  document.getElementById('yt-frame').src =
+    'https://www.youtube-nocookie.com/embed/' + YOUTUBE_VIDEO_ID +
+    '?rel=0&modestbranding=1&playsinline=1' + (AUTOPLAY_MUTED ? '&autoplay=1&mute=1' : '');
   // ---------------------------------------------------------------
 
   const privacyLink = document.getElementById('privacy-link');
