@@ -296,7 +296,36 @@ fbq('track', 'PageView');
     cursor:pointer;
   }
 
+  /* Small round button at the bottom-right: diamond icon, opens WhatsApp */
+  .wa-diamond{
+    position:fixed;
+    right:16px;
+    bottom:calc(18px + env(safe-area-inset-bottom, 0px));
+    z-index:20;
+    width:50px;
+    height:50px;
+    margin:0;
+    padding:0;
+    border-radius:50%;
+    border:2px solid rgba(255,255,255,0.9);
+    background:linear-gradient(145deg, #FFE08A 0%, #FFC65C 45%, #D99A1E 100%);
+    color:#2B1B3D;
+    box-shadow:0 10px 24px -8px rgba(255,198,92,0.8), 0 2px 6px rgba(0,0,0,0.35);
+    animation:gentle-shake 1.4s ease-in-out infinite;
+    -webkit-tap-highlight-color:transparent;
+  }
+
+  .wa-diamond svg{width:24px;height:24px;fill:currentColor;}
+
+  @keyframes gentle-shake{
+    0%, 100%{transform:translateX(0);}
+    25%{transform:translateX(-3px);}
+    50%{transform:translateX(0);}
+    75%{transform:translateX(3px);}
+  }
+
   @media (prefers-reduced-motion: reduce){
+    .wa-diamond{animation:none;}
     *{transition:none !important;}
   }
 </style>
@@ -340,10 +369,16 @@ fbq('track', 'PageView');
   </div>
 </div>
 
+<!-- Round button, bottom-right: diamond icon, opens WhatsApp -->
+<button type="button" class="wa-diamond" id="wa-diamond" aria-label="Chat on WhatsApp">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.2 3h11.6a1 1 0 0 1 .8.4l3.2 4.3a1 1 0 0 1-.1 1.3l-9.2 11.6a1 1 0 0 1-1.6 0L2.1 9a1 1 0 0 1-.1-1.3l3.4-4.3A1 1 0 0 1 6.2 3zm.5 2-2 2.5h3.4l1.2-2.5H6.700zm4.700 0L10.200 7.500h3.600L12.600 5h-1.200zm3.300 0 1.200 2.500h3.400L17.300 5h-2.600zM4.400 9.500 12 19.100l7.600-9.600H4.400z"/></svg>
+</button>
+
 <script>
   try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; window.scrollTo(0, 0); } catch (e) {}
   // ---- SETTINGS ----
-  const YOUTUBE_VIDEO_ID = "3fcPAqnfW4M";
+  const WHATSAPP_NUMBER = "918356069340"; // country code + number, no + or spaces
+  const YOUTUBE_VIDEO_ID = "FIkV6zREiy8";
   const AUTOPLAY_MUTED = false;   // false = YouTube player shows as it is, visitor taps play (sound works). true = starts by itself, but muted
   const VIDEO_IS_VERTICAL = false; // true if the video itself is 9:16 (Reel / Short style)
   const FULLSCREEN_FILL = false;   // true = a landscape video is zoomed to fill the whole phone screen in full-screen (sides get cropped); false = whole video visible with black bars
@@ -354,6 +389,12 @@ fbq('track', 'PageView');
     'https://www.youtube-nocookie.com/embed/' + YOUTUBE_VIDEO_ID +
     '?rel=0&modestbranding=1&playsinline=1' + (AUTOPLAY_MUTED ? '&autoplay=1&mute=1' : '');
   // ---------------------------------------------------------------
+
+  // Round diamond button: straight to WhatsApp (empty chat, no pre-filled message)
+  document.getElementById('wa-diamond').addEventListener('click', function(){
+    if (typeof fbq === 'function') fbq('track', 'Lead');
+    window.location.href = 'https://wa.me/' + WHATSAPP_NUMBER;
+  });
 
   const privacyLink = document.getElementById('privacy-link');
   const privacyModal = document.getElementById('privacy-modal');
