@@ -340,7 +340,7 @@ fbq('track', 'PageView');
   <p class="watch-first"><span>Most Important:</span> Pehle ye video dekho &mdash; sirf 2 min ka video</p>
 
   <div class="video-frame">
-    <iframe id="yt-frame" title="Video" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+    <iframe id="yt-frame" title="Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
   </div>
 
   <div class="content-card">
@@ -386,8 +386,8 @@ fbq('track', 'PageView');
 
   // ---- Video: the normal YouTube player, shown straight away ----
   document.getElementById('yt-frame').src =
-    'https://www.youtube-nocookie.com/embed/' + YOUTUBE_VIDEO_ID +
-    '?rel=0&modestbranding=1&playsinline=1' + (AUTOPLAY_MUTED ? '&autoplay=1&mute=1' : '');
+    'https://www.youtube.com/embed/' + YOUTUBE_VIDEO_ID +
+    '?rel=0&modestbranding=1&playsinline=1&enablejsapi=1' + (AUTOPLAY_MUTED ? '&autoplay=1&mute=1' : '');
   // ---------------------------------------------------------------
 
   // Round diamond button: straight to WhatsApp (empty chat, no pre-filled message)
