@@ -375,11 +375,11 @@ fbq('track', 'PageView');
 </div>
 
 <!-- Round button, bottom-right: diamond icon, opens WhatsApp -->
-  /*
+<!--
 <a class="wa-diamond" id="wa-diamond" href="https://api.whatsapp.com/send?phone=918169087250" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.2 3h11.6a1 1 0 0 1 .8.4l3.2 4.3a1 1 0 0 1-.1 1.3l-9.2 11.6a1 1 0 0 1-1.6 0L2.1 9a1 1 0 0 1-.1-1.3l3.4-4.3A1 1 0 0 1 6.2 3zm.5 2-2 2.5h3.4l1.2-2.5H6.7zm4.7 0L10.2 7.5h3.6L12.6 5h-1.2zm3.3 0 1.2 2.5h3.4L17.3 5h-2.6zM4.4 9.5 12 19.1l7.6-9.6H4.4z"/></svg>
 </a>
-  */
+  -->
 
 <script>
   try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; window.scrollTo(0, 0); } catch (e) {}
@@ -398,7 +398,7 @@ fbq('track', 'PageView');
   // ---------------------------------------------------------------
 
   // Round diamond button: a real link to WhatsApp (works inside Facebook/Instagram browsers too)
-  /*
+  <!--
   var cleanNumber = String(WHATSAPP_NUMBER).replace(/\D/g, '');
   var waLink = document.getElementById('wa-diamond');
   waLink.href = 'https://api.whatsapp.com/send?phone=' + cleanNumber;
@@ -406,7 +406,7 @@ fbq('track', 'PageView');
     if (typeof fbq === 'function') fbq('track', 'Lead');
     // no preventDefault: the browser opens the link itself
   });
-  */
+  -->
 
   const privacyLink = document.getElementById('privacy-link');
   const privacyModal = document.getElementById('privacy-modal');
