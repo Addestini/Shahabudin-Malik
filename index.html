@@ -383,7 +383,7 @@ fbq('track', 'PageView');
   try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; window.scrollTo(0, 0); } catch (e) {}
   // ---- SETTINGS ----
   const WHATSAPP_NUMBER = "918169087250"; // country code + number, no + or spaces
-  const YOUTUBE_VIDEO_ID = "2KLkGAScbR0";
+  const YOUTUBE_VIDEO_ID = "N5g2Z8aUEeI";
   const AUTOPLAY_MUTED = false;   // false = YouTube player shows as it is, visitor taps play (sound works). true = starts by itself, but muted
   const VIDEO_IS_VERTICAL = false; // true if the video itself is 9:16 (Reel / Short style)
   const FULLSCREEN_FILL = false;   // true = a landscape video is zoomed to fill the whole phone screen in full-screen (sides get cropped); false = whole video visible with black bars
@@ -396,6 +396,7 @@ fbq('track', 'PageView');
   // ---------------------------------------------------------------
 
   // Round diamond button: a real link to WhatsApp (works inside Facebook/Instagram browsers too)
+  /*
   var cleanNumber = String(WHATSAPP_NUMBER).replace(/\D/g, '');
   var waLink = document.getElementById('wa-diamond');
   waLink.href = 'https://api.whatsapp.com/send?phone=' + cleanNumber;
@@ -403,6 +404,7 @@ fbq('track', 'PageView');
     if (typeof fbq === 'function') fbq('track', 'Lead');
     // no preventDefault: the browser opens the link itself
   });
+  */
 
   const privacyLink = document.getElementById('privacy-link');
   const privacyModal = document.getElementById('privacy-modal');
